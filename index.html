@@ -28,6 +28,7 @@
 
   /* SCREENS */
   .screen { display: none; width: 100%; max-width: 540px; padding: 20px; }
+  #voting { max-width: 1000px; }
   .screen.active { display: flex; flex-direction: column; align-items: center; }
 
   /* INTRO */
@@ -60,7 +61,7 @@
   .welcome-name { color: var(--accent); font-weight: 600; }
 
   /* VOTING */
-  #voting { padding-top: 12px; gap: 16px; min-height: 100dvh; }
+  #voting { padding-top: 12px; gap: 16px; min-height: 100dvh; padding-left: 12px; padding-right: 12px; }
   .progress-bar {
     width: 100%; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden;
   }
@@ -86,8 +87,8 @@
   .proposal-card.voted-pos { border-color: var(--positive); }
   .proposal-card.voted-neg { border-color: var(--negative); }
   .proposal-img {
-    width: 100%; aspect-ratio: 4/3; object-fit: contain; background: #000;
-    display: block;
+    width: 100%; object-fit: contain; background: #000;
+    display: block; max-height: 75dvh;
   }
   .proposal-label {
     padding: 14px 18px; display: flex; justify-content: space-between; align-items: center;
