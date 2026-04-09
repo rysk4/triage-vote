@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Triage Vote</title>
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #141414;
+    --border: #222;
+    --text: #e8e8e8;
+    --muted: #777;
+    --positive: #34d399;
+    --positive-bg: #0d2d1f;
+    --negative: #f87171;
+    --negative-bg: #2d0d0d;
+    --accent: #818cf8;
+    --radius: 12px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg); color: var(--text);
+    min-height: 100dvh; display: flex; flex-direction: column; align-items: center;
+  }
+  button { font-family: inherit; cursor: pointer; border: none; }
+
+  /* SCREENS */
+  .screen { display: none; width: 100%; max-width: 540px; padding: 20px; }
+  .screen.active { display: flex; flex-direction: column; align-items: center; }
+
+  /* INTRO */
+  #intro { justify-content: center; min-height: 100dvh; gap: 32px; text-align: center; }
+  #intro h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+  #intro p { color: var(--muted); font-size: 15px; line-height: 1.6; max-width: 400px; }
+  .name-input {
+    width: 100%; max-width: 320px; padding: 14px 18px; border-radius: var(--radius);
+    background: var(--surface); border: 2px solid var(--border); color: var(--text);
+    font-size: 16px; text-align: center; outline: none; transition: border-color 0.2s;
+  }
+  .name-input:focus { border-color: var(--accent); }
+  .name-input::placeholder { color: #555; }
+  .btn-primary {
+    padding: 14px 40px; border-radius: var(--radius); background: var(--accent);
+    color: #fff; font-size: 16px; font-weight: 600; transition: opacity 0.2s;
+  }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-primary:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  /* RULES */
+  #rules { justify-content: center; min-height: 100dvh; gap: 28px; text-align: center; }
+  #rules h2 { font-size: 24px; font-weight: 700; }
+  .rules-list { text-align: left; list-style: none; display: flex; flex-direction: column; gap: 14px; width: 100%; }
+  .rules-list li {
+    display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px;
+    background: var(--surface); border-radius: var(--radius); font-size: 15px; line-height: 1.5;
+  }
+  .rules-list .icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .welcome-name { color: var(--accent); font-weight: 600; }
+
+  /* VOTING */
+  #voting { padding-top: 12px; gap: 16px; min-height: 100dvh; }
+  .progress-bar {
+    width: 100%; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden;
+  }
+  .progress-fill { height: 100%; background: var(--accent); transition: width 0.3s ease; border-radius: 2px; }
+  .vote-header {
+    display: flex; justify-content: space-between; align-items: center; width: 100%;
+    font-size: 13px; color: var(--muted);
+  }
+  .vote-counters { display: flex; gap: 12px; }
+  .counter { display: flex; align-items: center; gap: 4px; font-weight: 600; }
+  .counter.pos { color: var(--positive); }
+  .counter.neg { color: var(--negative); }
+  .counter .dot {
+    width: 8px; height: 8px; border-radius: 50%; display: inline-block;
+  }
+  .counter.pos .dot { background: var(--positive); }
+  .counter.neg .dot { background: var(--negative); }
+
+  .proposal-card {
+    width: 100%; background: var(--surface); border-radius: var(--radius);
+    overflow: hidden; border: 2px solid var(--border); transition: border-color 0.3s;
+  }
+  .proposal-card.voted-pos { border-color: var(--positive); }
+  .proposal-card.voted-neg { border-color: var(--negative); }
+  .proposal-img {
+    width: 100%; aspect-ratio: 4/3; object-fit: contain; background: #000;
+    display: block;
+  }
+  .proposal-label {
+    padding: 14px 18px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .proposal-number { font-size: 18px; font-weight: 700; }
+  .proposal-file { font-size: 12px; color: var(--muted); }
+
+  .vote-actions {
+    display: flex; gap: 12px; width: 100%;
+  }
+  .vote-btn {
+    flex: 1; padding: 16px; border-radius: var(--radius); font-size: 15px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: all 0.2s; border: 2px solid transparent;
+  }
+  .vote-btn.like {
+    background: var(--positive-bg); color: var(--positive); border-color: #1a4a30;
+  }
+  .vote-btn.like:hover { border-color: var(--positive); }
+  .vote-btn.like:disabled { opacity: 0.25; cursor: not-allowed; }
+  .vote-btn.like.selected { background: var(--positive); color: #000; border-color: var(--positive); }
+
+  .vote-btn.dislike {
+    background: var(--negative-bg); color: var(--negative); border-color: #4a1a1a;
+  }
+  .vote-btn.dislike:hover { border-color: var(--negative); }
+  .vote-btn.dislike:disabled { opacity: 0.25; cursor: not-allowed; }
+  .vote-btn.dislike.selected { background: var(--negative); color: #000; border-color: var(--negative); }
+
+  .nav-actions { display: flex; gap: 12px; width: 100%; }
+  .nav-btn {
+    flex: 1; padding: 12px; border-radius: var(--radius); background: var(--surface);
+    color: var(--muted); font-size: 14px; font-weight: 500; border: 1px solid var(--border);
+    transition: all 0.2s;
+  }
+  .nav-btn:hover { color: var(--text); border-color: #444; }
+  .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .nav-btn.finish { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+  .nav-btn.finish:hover { opacity: 0.85; }
+
+  /* RESULTS */
+  #results { padding-top: 24px; gap: 20px; padding-bottom: 40px; }
+  #results h2 { font-size: 24px; font-weight: 700; text-align: center; }
+  .results-summary {
+    text-align: center; color: var(--muted); font-size: 14px; line-height: 1.6;
+  }
+  .results-grid { width: 100%; display: flex; flex-direction: column; gap: 8px; }
+  .result-row {
+    display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+    background: var(--surface); border-radius: var(--radius); border: 2px solid var(--border);
+    transition: border-color 0.3s;
+  }
+  .result-row.winner { border-color: var(--positive); }
+  .result-row .rank { font-size: 14px; font-weight: 700; color: var(--muted); min-width: 28px; }
+  .result-row.winner .rank { color: var(--positive); }
+  .result-row .thumb {
+    width: 56px; height: 42px; border-radius: 6px; object-fit: cover; background: #000;
+  }
+  .result-row .info { flex: 1; }
+  .result-row .info .name { font-size: 14px; font-weight: 600; }
+  .result-bar-wrap { height: 6px; background: var(--border); border-radius: 3px; margin-top: 4px; overflow: hidden; }
+  .result-bar { height: 100%; border-radius: 3px; transition: width 0.5s ease; }
+  .result-bar.pos-bar { background: var(--positive); }
+  .result-bar.neg-bar { background: var(--negative); }
+  .result-row .score { font-size: 16px; font-weight: 700; min-width: 40px; text-align: right; }
+  .result-row .score.positive { color: var(--positive); }
+  .result-row .score.negative { color: var(--negative); }
+  .result-row .score.zero { color: var(--muted); }
+  .result-detail { font-size: 11px; color: var(--muted); }
+
+  .tab-bar { display: flex; gap: 4px; background: var(--surface); border-radius: var(--radius); padding: 4px; width: 100%; }
+  .tab-btn {
+    flex: 1; padding: 10px; border-radius: 8px; background: transparent;
+    color: var(--muted); font-size: 14px; font-weight: 500; transition: all 0.2s;
+  }
+  .tab-btn.active { background: var(--border); color: var(--text); }
+
+  .voters-list { width: 100%; display: flex; flex-direction: column; gap: 6px; }
+  .voter-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 16px; background: var(--surface); border-radius: 8px; font-size: 14px;
+  }
+  .voter-row .voter-name { font-weight: 600; }
+  .voter-row .voter-stats { color: var(--muted); font-size: 13px; }
+
+  /* Loading */
+  .spinner {
+    width: 24px; height: 24px; border: 3px solid var(--border);
+    border-top-color: var(--accent); border-radius: 50%;
+    animation: spin 0.8s linear infinite; margin: 20px auto;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Swipe hint */
+  .swipe-hint { color: var(--muted); font-size: 12px; text-align: center; opacity: 0.6; }
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div id="intro" class="screen active">
+  <h1>Triage Vote</h1>
+  <p>Hlasovaci system pro vyber navrhů. Zadej sve jmeno a zacni hlasovat.</p>
+  <input type="text" class="name-input" id="nameInput" placeholder="Tvoje jmeno" maxlength="30" autocomplete="off">
+  <button class="btn-primary" id="startBtn" disabled>Pokracovat</button>
+</div>
+
+<!-- RULES -->
+<div id="rules" class="screen">
+  <h2>Pravidla hlasovani</h2>
+  <p>Vitej, <span class="welcome-name" id="welcomeName"></span></p>
+  <ul class="rules-list">
+    <li><span class="icon">🖼</span><span>Projdes <strong>36 navrhů</strong> — kazdy je ocislovany (1–36)</span></li>
+    <li><span class="icon">👍</span><span>Mas <strong>3 pozitivni hlasy</strong> — pro navrhy, ktere se ti libi</span></li>
+    <li><span class="icon">👎</span><span>Mas <strong>3 negativni hlasy</strong> — pro navrhy, ktere se ti vylozene nelibi</span></li>
+    <li><span class="icon">⏭</span><span>Ostatni navrhy muzes preskocit — neni nutne hlasovat u vsech</span></li>
+    <li><span class="icon">🔄</span><span>Hlasy muzes menit dokud nedas <strong>Odeslat</strong></span></li>
+    <li><span class="icon">📊</span><span>Na konci uvidis celkove vysledky ze vsech hlasujicich</span></li>
+  </ul>
+  <button class="btn-primary" id="rulesBtn">Zacit hlasovat</button>
+</div>
+
+<!-- VOTING -->
+<div id="voting" class="screen">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="vote-header">
+    <span id="proposalCounter">1 / 36</span>
+    <div class="vote-counters">
+      <span class="counter pos"><span class="dot"></span> <span id="posLeft">3</span></span>
+      <span class="counter neg"><span class="dot"></span> <span id="negLeft">3</span></span>
+    </div>
+  </div>
+
+  <div class="proposal-card" id="proposalCard">
+    <img class="proposal-img" id="proposalImg" src="" alt="">
+    <div class="proposal-label">
+      <span class="proposal-number" id="proposalNum">#1</span>
+      <span class="proposal-file" id="proposalFile"></span>
+    </div>
+  </div>
+
+  <div class="vote-actions">
+    <button class="vote-btn like" id="likeBtn">👍 Libi se mi</button>
+    <button class="vote-btn dislike" id="dislikeBtn">👎 Nelibi</button>
+  </div>
+
+  <div class="nav-actions">
+    <button class="nav-btn" id="prevBtn" disabled>← Zpet</button>
+    <button class="nav-btn" id="nextBtn">Dalsi →</button>
+  </div>
+  <p class="swipe-hint">Projdi vsechny navrhy a pak odesli hlasy</p>
+</div>
+
+<!-- RESULTS -->
+<div id="results" class="screen">
+  <h2>Vysledky hlasovani</h2>
+  <div class="results-summary" id="resultsSummary"></div>
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="ranking">Poradi navrhů</button>
+    <button class="tab-btn" data-tab="voters">Hlasujici</button>
+  </div>
+  <div id="rankingTab" class="results-grid"></div>
+  <div id="votersTab" class="voters-list" style="display:none"></div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://kwkqqwpipsfzweopipoa.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt3a3Fxd3BpcHNmendlb3BpcG9hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5MDE3NDMsImV4cCI6MjA5MDQ3Nzc0M30.qgVJ_8kPqibSaiw6u3KHx8E0DSeTQerfPnrMnzVIbaQ';
+
+const TOTAL = 36;
+// Image files: merch_munchen-02.jpg to merch_munchen-37.jpg
+const proposals = Array.from({ length: TOTAL }, (_, i) => ({
+  number: i + 1,
+  file: `merch_munchen-${String(i + 2).padStart(2, '0')}.jpg`,
+  src: `zdroje-01/merch_munchen-${String(i + 2).padStart(2, '0')}.jpg`
+}));
+
+let voterName = '';
+let currentIndex = 0;
+let votes = {}; // { proposalNumber: 1 | -1 }
+const MAX_POS = 3;
+const MAX_NEG = 3;
+
+// Supabase REST helpers
+async function sbFetch(path, options = {}) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': options.prefer || 'return=representation',
+      ...options.headers
+    },
+    method: options.method || 'GET',
+    body: options.body ? JSON.stringify(options.body) : undefined
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Supabase error: ${res.status} ${err}`);
+  }
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
+}
+
+// SCREEN NAVIGATION
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// INTRO
+const nameInput = document.getElementById('nameInput');
+const startBtn = document.getElementById('startBtn');
+nameInput.addEventListener('input', () => {
+  startBtn.disabled = !nameInput.value.trim();
+});
+nameInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && nameInput.value.trim()) goToRules();
+});
+startBtn.addEventListener('click', goToRules);
+
+async function goToRules() {
+  voterName = nameInput.value.trim();
+  document.getElementById('welcomeName').textContent = voterName;
+
+  // Load any existing votes for this user
+  try {
+    const existing = await sbFetch(`triage_votes?voter_name=eq.${encodeURIComponent(voterName)}&select=proposal_number,vote`);
+    if (existing && existing.length > 0) {
+      existing.forEach(v => { votes[v.proposal_number] = v.vote; });
+    }
+  } catch (e) {
+    console.warn('Could not load existing votes:', e);
+  }
+
+  showScreen('rules');
+}
+
+// RULES
+document.getElementById('rulesBtn').addEventListener('click', () => {
+  showScreen('voting');
+  renderProposal();
+});
+
+// VOTING
+const proposalImg = document.getElementById('proposalImg');
+const proposalNum = document.getElementById('proposalNum');
+const proposalFile = document.getElementById('proposalFile');
+const proposalCard = document.getElementById('proposalCard');
+const progressFill = document.getElementById('progressFill');
+const posLeft = document.getElementById('posLeft');
+const negLeft = document.getElementById('negLeft');
+const likeBtn = document.getElementById('likeBtn');
+const dislikeBtn = document.getElementById('dislikeBtn');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const counterEl = document.getElementById('proposalCounter');
+
+function countVotes(type) {
+  return Object.values(votes).filter(v => v === type).length;
+}
+
+function renderProposal() {
+  const p = proposals[currentIndex];
+  proposalImg.src = p.src;
+  proposalImg.alt = `Navrh #${p.number}`;
+  proposalNum.textContent = `#${p.number}`;
+  proposalFile.textContent = p.file;
+  counterEl.textContent = `${currentIndex + 1} / ${TOTAL}`;
+  progressFill.style.width = `${((currentIndex + 1) / TOTAL) * 100}%`;
+
+  const currentVote = votes[p.number] || 0;
+  proposalCard.className = 'proposal-card' +
+    (currentVote === 1 ? ' voted-pos' : currentVote === -1 ? ' voted-neg' : '');
+
+  likeBtn.classList.toggle('selected', currentVote === 1);
+  dislikeBtn.classList.toggle('selected', currentVote === -1);
+
+  const posUsed = countVotes(1);
+  const negUsed = countVotes(-1);
+  posLeft.textContent = MAX_POS - posUsed;
+  negLeft.textContent = MAX_NEG - negUsed;
+
+  likeBtn.disabled = currentVote !== 1 && posUsed >= MAX_POS;
+  dislikeBtn.disabled = currentVote !== -1 && negUsed >= MAX_NEG;
+
+  prevBtn.disabled = currentIndex === 0;
+
+  // Show "Odeslat" on last proposal
+  if (currentIndex === TOTAL - 1) {
+    nextBtn.textContent = 'Odeslat hlasy ✓';
+    nextBtn.classList.add('finish');
+  } else {
+    nextBtn.textContent = 'Dalsi →';
+    nextBtn.classList.remove('finish');
+  }
+}
+
+function toggleVote(type) {
+  const p = proposals[currentIndex];
+  if (votes[p.number] === type) {
+    delete votes[p.number];
+  } else {
+    votes[p.number] = type;
+  }
+  renderProposal();
+}
+
+likeBtn.addEventListener('click', () => toggleVote(1));
+dislikeBtn.addEventListener('click', () => toggleVote(-1));
+
+prevBtn.addEventListener('click', () => {
+  if (currentIndex > 0) { currentIndex--; renderProposal(); }
+});
+
+nextBtn.addEventListener('click', () => {
+  if (currentIndex < TOTAL - 1) {
+    currentIndex++;
+    renderProposal();
+  } else {
+    submitVotes();
+  }
+});
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+  const voting = document.getElementById('voting');
+  if (!voting.classList.contains('active')) return;
+  if (e.key === 'ArrowLeft' && currentIndex > 0) { currentIndex--; renderProposal(); }
+  if (e.key === 'ArrowRight') {
+    if (currentIndex < TOTAL - 1) { currentIndex++; renderProposal(); }
+  }
+  if (e.key === 'ArrowUp' && !likeBtn.disabled) toggleVote(1);
+  if (e.key === 'ArrowDown' && !dislikeBtn.disabled) toggleVote(-1);
+});
+
+async function submitVotes() {
+  nextBtn.disabled = true;
+  nextBtn.textContent = 'Odesilam...';
+
+  try {
+    // Delete existing votes for this user first
+    await fetch(`${SUPABASE_URL}/rest/v1/triage_votes?voter_name=eq.${encodeURIComponent(voterName)}`, {
+      method: 'DELETE',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+      }
+    });
+
+    // Insert new votes
+    const voteRows = Object.entries(votes).map(([num, vote]) => ({
+      voter_name: voterName,
+      proposal_number: parseInt(num),
+      vote: vote
+    }));
+
+    if (voteRows.length > 0) {
+      await sbFetch('triage_votes', {
+        method: 'POST',
+        body: voteRows,
+        headers: { 'Prefer': 'return=minimal' },
+        prefer: 'return=minimal'
+      });
+    }
+
+    showScreen('results');
+    loadResults();
+  } catch (e) {
+    console.error('Submit error:', e);
+    nextBtn.disabled = false;
+    nextBtn.textContent = 'Chyba — zkusit znovu';
+  }
+}
+
+// RESULTS
+const tabBtns = document.querySelectorAll('.tab-btn');
+tabBtns.forEach(btn => btn.addEventListener('click', () => {
+  tabBtns.forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('rankingTab').style.display = btn.dataset.tab === 'ranking' ? '' : 'none';
+  document.getElementById('votersTab').style.display = btn.dataset.tab === 'voters' ? '' : 'none';
+}));
+
+async function loadResults() {
+  const rankingTab = document.getElementById('rankingTab');
+  const votersTab = document.getElementById('votersTab');
+  const summary = document.getElementById('resultsSummary');
+
+  rankingTab.innerHTML = '<div class="spinner"></div>';
+
+  try {
+    const allVotes = await sbFetch('triage_votes?select=voter_name,proposal_number,vote');
+
+    // Aggregate by proposal
+    const proposalScores = {};
+    const voterMap = {};
+
+    for (let i = 1; i <= TOTAL; i++) {
+      proposalScores[i] = { pos: 0, neg: 0, total: 0 };
+    }
+
+    allVotes.forEach(v => {
+      if (!proposalScores[v.proposal_number]) return;
+      if (v.vote === 1) proposalScores[v.proposal_number].pos++;
+      if (v.vote === -1) proposalScores[v.proposal_number].neg++;
+      proposalScores[v.proposal_number].total += v.vote;
+
+      if (!voterMap[v.voter_name]) voterMap[v.voter_name] = { pos: 0, neg: 0 };
+      if (v.vote === 1) voterMap[v.voter_name].pos++;
+      if (v.vote === -1) voterMap[v.voter_name].neg++;
+    });
+
+    const voterCount = Object.keys(voterMap).length;
+    const voteCount = allVotes.length;
+    summary.innerHTML = `${voterCount} hlasujicich &middot; ${voteCount} hlasů celkem`;
+
+    // Sort proposals by score desc, then by positive votes desc
+    const sorted = Object.entries(proposalScores)
+      .map(([num, s]) => ({ num: parseInt(num), ...s }))
+      .sort((a, b) => b.total - a.total || b.pos - a.pos);
+
+    const maxScore = Math.max(...sorted.map(s => Math.abs(s.total)), 1);
+
+    rankingTab.innerHTML = sorted.map((s, i) => {
+      const p = proposals[s.num - 1];
+      const isWinner = i === 0 && s.total > 0;
+      const scoreClass = s.total > 0 ? 'positive' : s.total < 0 ? 'negative' : 'zero';
+      const barWidth = Math.abs(s.total) / maxScore * 100;
+      const barClass = s.total >= 0 ? 'pos-bar' : 'neg-bar';
+      return `
+        <div class="result-row ${isWinner ? 'winner' : ''}">
+          <span class="rank">${i + 1}.</span>
+          <img class="thumb" src="${p.src}" alt="#${s.num}">
+          <div class="info">
+            <div class="name">#${s.num}</div>
+            <div class="result-bar-wrap"><div class="result-bar ${barClass}" style="width:${barWidth}%"></div></div>
+            <div class="result-detail">+${s.pos} / -${s.neg}</div>
+          </div>
+          <span class="score ${scoreClass}">${s.total > 0 ? '+' : ''}${s.total}</span>
+        </div>`;
+    }).join('');
+
+    // Voters tab
+    const votersSorted = Object.entries(voterMap)
+      .map(([name, stats]) => ({ name, ...stats }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+
+    votersTab.innerHTML = votersSorted.map(v => `
+      <div class="voter-row">
+        <span class="voter-name">${v.name}${v.name === voterName ? ' (ty)' : ''}</span>
+        <span class="voter-stats">+${v.pos} / -${v.neg}</span>
+      </div>
+    `).join('');
+
+  } catch (e) {
+    console.error('Load results error:', e);
+    rankingTab.innerHTML = '<p style="color:var(--negative);text-align:center;padding:20px">Chyba pri nacitani vysledku</p>';
+  }
+}
+
+// Also need DELETE policy
+// Handle page reload — check for stored name
+const savedName = sessionStorage.getItem('triage_voter');
+if (savedName) {
+  nameInput.value = savedName;
+  startBtn.disabled = false;
+}
+
+// Save name on submit
+const origGoToRules = goToRules;
+</script>
+</body>
+</html>
