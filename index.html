@@ -430,16 +430,7 @@ async function submitVotes() {
   nextBtn.textContent = 'Odesilam...';
 
   try {
-    // Delete existing votes for this user first
-    await fetch(`${SUPABASE_URL}/rest/v1/triage_votes?voter_name=eq.${encodeURIComponent(voterName)}`, {
-      method: 'DELETE',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
-      }
-    });
-
-    // Insert new votes
+    // Upsert votes (safe — no deletes, conflict on unique constraint)
     const voteRows = Object.entries(votes).map(([num, vote]) => ({
       voter_name: voterName,
       proposal_number: parseInt(num),
@@ -450,8 +441,8 @@ async function submitVotes() {
       await sbFetch('triage_votes', {
         method: 'POST',
         body: voteRows,
-        headers: { 'Prefer': 'return=minimal' },
-        prefer: 'return=minimal'
+        headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+        prefer: 'resolution=merge-duplicates,return=minimal'
       });
     }
 
