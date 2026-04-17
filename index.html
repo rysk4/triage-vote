@@ -762,15 +762,23 @@ let currentIndex = 0;
 let stagedFiles = [];
 
 // ---------- boot + routing ----------
+// Slug is read from URL path (/merch-munchen-01) or legacy hash (#merch-munchen-01).
+function detectSlug() {
+  const path = (location.pathname || '/').replace(/^\/+|\/+$/g, '');
+  if (path && path !== 'index.html' && /^[a-z0-9][a-z0-9-]*$/.test(path)) return path;
+  const hash = (location.hash || '').replace(/^#/, '').trim();
+  return hash || '';
+}
+
 function shareLinkFor(round) {
-  return location.origin + location.pathname + '#' + round.slug;
+  return location.origin + '/' + round.slug;
 }
 
 async function boot() {
-  const hashSlug = (location.hash || '').replace(/^#/, '').trim();
-  if (hashSlug) {
+  const slug = detectSlug();
+  if (slug) {
     mode = 'public';
-    await bootPublic(hashSlug);
+    await bootPublic(slug);
   } else {
     mode = 'admin';
     await bootAdmin();
@@ -779,10 +787,11 @@ async function boot() {
 }
 
 window.addEventListener('hashchange', () => {
-  const hashSlug = (location.hash || '').replace(/^#/, '').trim();
-  const newMode = hashSlug ? 'public' : 'admin';
+  const slug = detectSlug();
+  const newMode = slug ? 'public' : 'admin';
   if (newMode !== mode) location.reload();
 });
+window.addEventListener('popstate', () => location.reload());
 
 async function bootPublic(slug) {
   // Redirect "back" buttons to publicHome so voters don't land on admin page
