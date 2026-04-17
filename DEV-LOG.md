@@ -91,3 +91,20 @@ Jednoduchá hlasovaci webappka pro vyber navrhů. Uzivatele prochazeji obrazky a
 - Password gate je klient-only (je to prototyp) — kdokoli s F12 muze bypassnout
 - RLS policies v Supabase jsou otevrene pro anon → admin gate neni bezpecnost, jen UX
 - Pokud se to casem zacne zneuzivat: nasadit edge function + signed JWT
+
+## 2026-04-17 (pozdeji II) — Zamknout kolo + name input screen
+
+### Co je nove
+- **Zamknout/odemknout kolo** — novy button `🔒 Zamknout` / `🔓 Odemknout` v admin home
+  - Column `triage_rounds.locked BOOLEAN NOT NULL DEFAULT false`
+  - DB trigger `triage_votes_lock_guard` BEFORE INSERT/UPDATE — vyhodi `P0001` chybu pokud je kolo zamcene (bezpecnost na urovni DB, ne jen klient)
+  - Public i admin home ukazou banner `🔒 Hlasovani bylo uzavreno` + disabled Hlasovat button
+  - `Vyhodnotit` button funguje stejne (lze se podivat na vysledky)
+- **Name input screen** — nahrazeni `prompt()` za hezky `#nameScreen` ve stejnem stylu jako zbytek UI
+  - Input + Pokracovat button, Enter submit, predvyplneno z sessionStorage
+  - Back button → predchozi screen (home nebo publicHome dle mode)
+  - Pred tim user videl nativni browser prompt, ted vlastni UI
+
+### Files
+- Migrace: `triage_vote_lock_rounds`
+- JS: startVoting refactor do 2 kroku (nameScreen → submitNameAndStart)

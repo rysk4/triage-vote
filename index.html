@@ -390,6 +390,22 @@
   .toast.visible { opacity: 1; pointer-events: auto; }
   .toast.error { border-color: var(--negative); color: var(--negative); }
 
+  /* LOCKED BANNER */
+  .lock-banner {
+    width: 100%; padding: 18px 20px; border-radius: var(--radius);
+    background: var(--surface); border: 2px solid var(--border);
+    display: flex; flex-direction: column; gap: 4px; align-items: center; text-align: center;
+  }
+  .lock-banner .emoji { font-size: 32px; margin-bottom: 4px; }
+  .lock-banner .title { font-size: 16px; font-weight: 700; color: var(--text); }
+  .lock-banner .hint  { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  /* NAME SCREEN */
+  #nameScreen { justify-content: center; min-height: 100dvh; gap: 22px; text-align: center; }
+  #nameScreen h2 { font-size: 24px; font-weight: 700; letter-spacing: -0.3px; }
+  #nameScreen .sub { color: var(--muted); font-size: 14px; max-width: 360px; line-height: 1.6; }
+  #nameScreen .round-name { color: var(--accent); font-weight: 600; }
+
   /* BADGE (admin vs public label) */
   .mode-badge {
     position: fixed; top: 12px; right: 12px; z-index: 100;
@@ -427,10 +443,29 @@
   <p class="subtitle" id="publicRoundSubtitle">Nacitam...</p>
   <div class="meta-line" id="publicRoundMeta"></div>
 
+  <div class="lock-banner" id="publicLockBanner" style="display:none">
+    <div class="emoji">🔒</div>
+    <div class="title">Hlasovani bylo uzavreno</div>
+    <div class="hint" id="publicLockHint">Nove hlasy uz nelze odeslat. Vysledky najdes v sekci Vyhodnotit.</div>
+  </div>
+
   <div class="home-actions">
     <button class="btn btn-primary" id="publicVoteBtn">Hlasovat</button>
     <button class="btn btn-secondary" id="publicEvalBtn">Vyhodnotit</button>
   </div>
+</div>
+
+<!-- NAME SCREEN (replaces prompt()) -->
+<div id="nameScreen" class="screen">
+  <div class="page-header">
+    <button class="back-btn" data-back="home">← Zpet</button>
+    <div class="page-title">Tvoje jmeno</div>
+    <div class="page-spacer"></div>
+  </div>
+  <h2>Jak se jmenujes?</h2>
+  <p class="sub">Hlasujes v kole <span class="round-name" id="nameRoundName"></span>.<br>Jmeno pouzijeme k ulozeni tvych hlasů — muzes se k nim vratit a upravit je.</p>
+  <input type="text" class="name-input" id="nameInput" placeholder="Napr. Matyas" maxlength="30" autocomplete="name">
+  <button class="btn btn-primary" id="nameSubmitBtn" disabled style="min-width:220px">Pokracovat</button>
 </div>
 
 <!-- HOME (admin) -->
@@ -444,12 +479,19 @@
     <div class="round-meta" id="roundMeta"></div>
   </div>
 
+  <div class="lock-banner" id="homeLockBanner" style="display:none">
+    <div class="emoji">🔒</div>
+    <div class="title">Hlasovani je uzavreno</div>
+    <div class="hint">Nove hlasy uz nelze odeslat. Odemkni kolo tlacitkem nize pro znovu otevreni.</div>
+  </div>
+
   <div class="home-actions">
     <button class="btn btn-primary" id="homeVoteBtn">Hlasovat</button>
     <button class="btn btn-secondary" id="homeEvalBtn">Vyhodnotit</button>
   </div>
   <div class="round-actions-row">
     <button class="round-action-btn" id="shareRoundBtn">🔗 Zkopirovat odkaz</button>
+    <button class="round-action-btn" id="lockRoundBtn">🔒 Zamknout</button>
     <button class="round-action-btn danger" id="deleteRoundBtn">🗑 Smazat kolo</button>
   </div>
   <div class="home-secondary">
@@ -755,7 +797,9 @@ async function bootPublic(slug) {
     rounds = [currentRound];
     currentProposals = await sbRest('triage_proposals?round_id=eq.' + currentRound.id + '&select=*&order=proposal_number.asc');
     document.getElementById('publicRoundTitle').textContent = currentRound.name;
-    document.getElementById('publicRoundSubtitle').textContent = 'Hlasovaci kolo — vyber svych favoritů a odeslat.';
+    document.getElementById('publicRoundSubtitle').textContent = currentRound.locked
+      ? 'Toto hlasovani je uzavrene.'
+      : 'Hlasovaci kolo — vyber svych favoritů a odeslat.';
     const meta = document.getElementById('publicRoundMeta');
     meta.textContent = '';
     const s1 = document.createElement('span');
@@ -763,8 +807,13 @@ async function bootPublic(slug) {
     const s2 = document.createElement('span');
     s2.innerHTML = '<strong>+' + currentRound.max_pos + '</strong> / <strong>−' + currentRound.max_neg + '</strong> hlasů';
     meta.appendChild(s1); meta.appendChild(s2);
-    const canVote = currentProposals.length > 0;
+    const locked = !!currentRound.locked;
+    const canVote = currentProposals.length > 0 && !locked;
     document.getElementById('publicVoteBtn').disabled = !canVote;
+    document.getElementById('publicLockBanner').style.display = locked ? 'flex' : 'none';
+    document.getElementById('publicLockHint').textContent = currentProposals.length
+      ? 'Nove hlasy uz nelze odeslat. Vysledky najdes v sekci Vyhodnotit.'
+      : 'Hlasovani bylo zamceno — zadne navrhy.';
   } catch (e) {
     console.error(e);
     document.getElementById('publicRoundSubtitle').textContent = 'Chyba pri nacitani: ' + e.message;
@@ -852,6 +901,29 @@ document.getElementById('shareRoundBtn').addEventListener('click', async () => {
   }
 });
 
+document.getElementById('lockRoundBtn').addEventListener('click', async () => {
+  if (!currentRound) return;
+  const next = !currentRound.locked;
+  const btn = document.getElementById('lockRoundBtn');
+  btn.disabled = true;
+  try {
+    const res = await sbRest('triage_rounds?id=eq.' + currentRound.id, {
+      method: 'PATCH',
+      body: { locked: next },
+      headers: { 'Prefer': 'return=representation' }
+    });
+    currentRound.locked = next;
+    const idx = rounds.findIndex(r => r.id === currentRound.id);
+    if (idx >= 0) rounds[idx] = Object.assign({}, rounds[idx], { locked: next });
+    await pickRound(currentRound.id);
+    toast(next ? '🔒 Kolo zamceno' : '🔓 Kolo odemceno');
+  } catch (err) {
+    console.error(err);
+    toast('Chyba: ' + err.message, { error: true });
+    btn.disabled = false;
+  }
+});
+
 document.getElementById('deleteRoundBtn').addEventListener('click', async () => {
   if (!currentRound) return;
   const r = currentRound;
@@ -920,11 +992,18 @@ async function pickRound(id) {
     console.error(e);
     currentProposals = [];
   }
-  document.getElementById('roundMeta').textContent =
-    currentProposals.length + ' navrhů · +' + currentRound.max_pos + ' / −' + currentRound.max_neg + ' hlasů';
-  const canVote = currentProposals.length > 0;
+  const locked = !!currentRound.locked;
+  const metaText = currentProposals.length + ' navrhů · +' + currentRound.max_pos + ' / −' + currentRound.max_neg + ' hlasů';
+  document.getElementById('roundMeta').textContent = metaText + (locked ? ' · 🔒 uzavreno' : '');
+
+  const canVote = currentProposals.length > 0 && !locked;
   document.getElementById('homeVoteBtn').disabled = !canVote;
   document.getElementById('homeEvalBtn').disabled = false;
+  document.getElementById('homeLockBanner').style.display = locked ? 'flex' : 'none';
+
+  const lockBtn = document.getElementById('lockRoundBtn');
+  lockBtn.textContent = locked ? '🔓 Odemknout' : '🔒 Zamknout';
+  lockBtn.disabled = false;
 }
 
 document.getElementById('roundSelect').addEventListener('change', (e) => {
@@ -940,13 +1019,34 @@ document.getElementById('homeNewRoundBtn').addEventListener('click', () => {
 });
 
 // ---------- voting ----------
-async function startVoting() {
+function startVoting() {
   if (!currentRound) return;
-  const existing = sessionStorage.getItem('triage_voter') || '';
-  const nameRaw = prompt('Zadej sve jmeno:', existing);
-  if (!nameRaw) return;
-  voterName = nameRaw.trim();
-  if (!voterName) return;
+  if (currentRound.locked) {
+    toast('🔒 Hlasovani bylo uzavreno.', { duration: 2800 });
+    return;
+  }
+  const saved = sessionStorage.getItem('triage_voter') || '';
+  const input = document.getElementById('nameInput');
+  const submitBtn = document.getElementById('nameSubmitBtn');
+  document.getElementById('nameRoundName').textContent = currentRound.name;
+  input.value = saved;
+  submitBtn.disabled = !saved.trim();
+  showScreen('nameScreen');
+  setTimeout(() => input.focus(), 60);
+}
+
+const nameInput = document.getElementById('nameInput');
+const nameSubmitBtn = document.getElementById('nameSubmitBtn');
+nameInput.addEventListener('input', () => { nameSubmitBtn.disabled = !nameInput.value.trim(); });
+nameInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && nameInput.value.trim()) submitNameAndStart();
+});
+nameSubmitBtn.addEventListener('click', submitNameAndStart);
+
+async function submitNameAndStart() {
+  const raw = nameInput.value.trim();
+  if (!raw || !currentRound) return;
+  voterName = raw;
   sessionStorage.setItem('triage_voter', voterName);
 
   votes = {};
