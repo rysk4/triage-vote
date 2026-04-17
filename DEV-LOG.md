@@ -70,3 +70,24 @@ Jednoduchá hlasovaci webappka pro vyber navrhů. Uzivatele prochazeji obrazky a
 - Voter hlasy jsou per-round nezavisle (stejne jmeno muze hlasovat v ruznych kolech)
 - Delete proposalu smaze i vsechny jeho hlasy v danem kole
 - Rollback pri selhani create-round: smaze rozepsane kolo + uploadovane files
+
+## 2026-04-17 (pozdeji) — Admin gate + public per-round URL + delete round
+
+### Co je nove
+- **Admin** je na `/` pod heslem (SHA-256 hash v `ADMIN_PASSWORD_SHA256`, session storage flag)
+  - Default heslo: `napajedla-triage-2026` (zmena: `printf '%s' 'NOVE' | shasum -a 256`)
+  - Odhlaseni pres badge vpravo nahore
+- **Public kolo** ma vlastni odkaz `/#slug` (hashchange → reload)
+  - Otevre se minimalisticky `#publicHome` screen s 2 buttony (Hlasovat / Vyhodnotit)
+  - Bez admin pickru, bez new-round, bez delete
+  - Back buttony v dalsich screens redirectuji na `publicHome` (prepisovany `data-back`)
+- **Smazat kolo** — button vedle share linku v admin home
+  - Confirm dialog ukazuje pocet navrhů + pocet hlasů
+  - DB delete cascade (triage_rounds → proposals → votes) + Promise.allSettled storage cleanup
+- **Sdilet odkaz** — navigator.clipboard.writeText s fallback na prompt()
+- **Po vytvoreni kola** se odkaz automaticky kopiruje + toast notifikace
+
+### Security poznamka
+- Password gate je klient-only (je to prototyp) — kdokoli s F12 muze bypassnout
+- RLS policies v Supabase jsou otevrene pro anon → admin gate neni bezpecnost, jen UX
+- Pokud se to casem zacne zneuzivat: nasadit edge function + signed JWT

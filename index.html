@@ -344,12 +344,97 @@
     animation: spin 0.8s linear infinite; margin: 20px auto;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* LOGIN */
+  #login { justify-content: center; min-height: 100dvh; gap: 24px; text-align: center; }
+  #login h1 { font-size: 28px; font-weight: 800; }
+  #login .sub { color: var(--muted); font-size: 14px; }
+  .login-box { width: 100%; max-width: 320px; display: flex; flex-direction: column; gap: 12px; }
+  .login-err { color: var(--negative); font-size: 13px; min-height: 18px; }
+
+  /* PUBLIC HOME */
+  #publicHome { justify-content: center; min-height: 100dvh; gap: 28px; text-align: center; }
+  #publicHome h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; }
+  #publicHome .subtitle { color: var(--muted); font-size: 14px; line-height: 1.6; max-width: 400px; }
+  #publicHome .meta-line {
+    display: inline-flex; gap: 16px; padding: 10px 18px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 999px; font-size: 13px; color: var(--muted);
+  }
+  #publicHome .meta-line strong { color: var(--text); font-weight: 600; }
+
+  /* ROUND ACTIONS (admin) */
+  .round-actions-row {
+    display: flex; gap: 8px; width: 100%; margin-top: 4px; flex-wrap: wrap;
+  }
+  .round-action-btn {
+    flex: 1; min-width: 0; padding: 10px 12px; border-radius: 8px;
+    background: transparent; border: 1px solid var(--border); color: var(--muted);
+    font-size: 12px; font-weight: 600; display: inline-flex;
+    align-items: center; justify-content: center; gap: 6px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .round-action-btn:hover { color: var(--text); border-color: var(--border-strong); }
+  .round-action-btn.danger { color: var(--negative); border-color: #4a1a1a; }
+  .round-action-btn.danger:hover { border-color: var(--negative); background: var(--negative-bg); }
+  .round-action-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: var(--surface); color: var(--text); padding: 12px 18px;
+    border-radius: 999px; border: 1px solid var(--accent); font-size: 14px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4); z-index: 1000;
+    opacity: 0; pointer-events: none; transition: opacity 0.25s;
+    max-width: 90vw; text-align: center;
+  }
+  .toast.visible { opacity: 1; pointer-events: auto; }
+  .toast.error { border-color: var(--negative); color: var(--negative); }
+
+  /* BADGE (admin vs public label) */
+  .mode-badge {
+    position: fixed; top: 12px; right: 12px; z-index: 100;
+    padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 700;
+    background: var(--surface); border: 1px solid var(--border); color: var(--muted);
+    letter-spacing: 0.5px;
+  }
+  .mode-badge.admin { color: var(--accent); border-color: var(--accent); }
+  .logout-btn {
+    margin-left: 6px; cursor: pointer; text-decoration: underline; opacity: 0.7;
+  }
+  .logout-btn:hover { opacity: 1; }
 </style>
 </head>
 <body>
 
-<!-- HOME -->
-<div id="home" class="screen active">
+<div class="mode-badge" id="modeBadge" style="display:none"></div>
+<div class="toast" id="toast"></div>
+
+<!-- LOGIN (admin gate) -->
+<div id="login" class="screen">
+  <h1>🔒 Admin</h1>
+  <p class="sub">Zadej heslo pro pristup do spravce hlasovani.</p>
+  <div class="login-box">
+    <input type="password" class="name-input" id="loginInput" placeholder="Heslo" autocomplete="current-password">
+    <button class="btn btn-primary" id="loginBtn">Prihlasit</button>
+    <div class="login-err" id="loginErr"></div>
+  </div>
+  <p class="sub" style="font-size:12px">Verejna kola maji vlastni odkaz — ten heslo nevyzaduje.</p>
+</div>
+
+<!-- PUBLIC HOME (shown when URL has #slug) -->
+<div id="publicHome" class="screen">
+  <h1 id="publicRoundTitle">Hlasovani</h1>
+  <p class="subtitle" id="publicRoundSubtitle">Nacitam...</p>
+  <div class="meta-line" id="publicRoundMeta"></div>
+
+  <div class="home-actions">
+    <button class="btn btn-primary" id="publicVoteBtn">Hlasovat</button>
+    <button class="btn btn-secondary" id="publicEvalBtn">Vyhodnotit</button>
+  </div>
+</div>
+
+<!-- HOME (admin) -->
+<div id="home" class="screen">
   <h1>Triage Vote</h1>
   <p class="subtitle">Hlasovaci system pro vyber navrhů. Vyber kolo a zacni hlasovat — nebo zaloz nove.</p>
 
@@ -362,6 +447,10 @@
   <div class="home-actions">
     <button class="btn btn-primary" id="homeVoteBtn">Hlasovat</button>
     <button class="btn btn-secondary" id="homeEvalBtn">Vyhodnotit</button>
+  </div>
+  <div class="round-actions-row">
+    <button class="round-action-btn" id="shareRoundBtn">🔗 Zkopirovat odkaz</button>
+    <button class="round-action-btn danger" id="deleteRoundBtn">🗑 Smazat kolo</button>
   </div>
   <div class="home-secondary">
     <button class="btn btn-ghost" id="homeNewRoundBtn">+ Nove hlasovani</button>
@@ -502,7 +591,50 @@ const SUPABASE_URL = 'https://kwkqqwpipsfzweopipoa.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt3a3Fxd3BpcHNmendlb3BpcG9hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5MDE3NDMsImV4cCI6MjA5MDQ3Nzc0M30.qgVJ_8kPqibSaiw6u3KHx8E0DSeTQerfPnrMnzVIbaQ';
 const BUCKET = 'triage-images';
 
+// Admin password (SHA-256 hash). Default plaintext: "napajedla-triage-2026"
+// Change by running:  printf '%s' 'NEW_PASSWORD' | shasum -a 256   and pasting below.
+const ADMIN_PASSWORD_SHA256 = 'a776566eee8075de6368b947423b79b580f301e9eac55e57c7fdc495bd2816d3';
+const ADMIN_SESSION_KEY = 'triage_admin_ok';
+
+// Runtime mode: 'admin' (default, gated) or 'public' (hash URL, single round)
+let mode = 'admin';
+
 // ---------- helpers ----------
+async function sha256Hex(s) {
+  const bytes = new TextEncoder().encode(s);
+  const buf = await crypto.subtle.digest('SHA-256', bytes);
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function toast(msg, opts) {
+  opts = opts || {};
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast visible' + (opts.error ? ' error' : '');
+  clearTimeout(el._timer);
+  el._timer = setTimeout(() => el.classList.remove('visible'), opts.duration || 2800);
+}
+
+function setModeBadge() {
+  const b = document.getElementById('modeBadge');
+  if (mode === 'admin') {
+    b.textContent = 'ADMIN';
+    b.className = 'mode-badge admin';
+    const logout = document.createElement('span');
+    logout.className = 'logout-btn';
+    logout.textContent = 'odhlasit';
+    logout.addEventListener('click', () => {
+      sessionStorage.removeItem(ADMIN_SESSION_KEY);
+      location.reload();
+    });
+    b.appendChild(document.createTextNode(' · '));
+    b.appendChild(logout);
+    b.style.display = 'block';
+  } else {
+    b.style.display = 'none';
+  }
+}
+
 function esc(s) {
   if (s === null || s === undefined) return '';
   return String(s)
@@ -582,8 +714,74 @@ let votes = {};
 let currentIndex = 0;
 let stagedFiles = [];
 
-// ---------- boot ----------
+// ---------- boot + routing ----------
+function shareLinkFor(round) {
+  return location.origin + location.pathname + '#' + round.slug;
+}
+
 async function boot() {
+  const hashSlug = (location.hash || '').replace(/^#/, '').trim();
+  if (hashSlug) {
+    mode = 'public';
+    await bootPublic(hashSlug);
+  } else {
+    mode = 'admin';
+    await bootAdmin();
+  }
+  setModeBadge();
+}
+
+window.addEventListener('hashchange', () => {
+  const hashSlug = (location.hash || '').replace(/^#/, '').trim();
+  const newMode = hashSlug ? 'public' : 'admin';
+  if (newMode !== mode) location.reload();
+});
+
+async function bootPublic(slug) {
+  // Redirect "back" buttons to publicHome so voters don't land on admin page
+  document.querySelectorAll('[data-back="home"]').forEach(b => { b.dataset.back = 'publicHome'; });
+  showScreen('publicHome');
+  document.getElementById('publicRoundSubtitle').textContent = 'Nacitam...';
+  try {
+    const res = await sbRest('triage_rounds?slug=eq.' + encodeURIComponent(slug) + '&select=*');
+    if (!res || res.length === 0) {
+      document.getElementById('publicRoundTitle').textContent = 'Kolo nenalezeno';
+      document.getElementById('publicRoundSubtitle').textContent = 'Tento odkaz zrejme neexistuje nebo bylo kolo smazano.';
+      document.getElementById('publicRoundMeta').style.display = 'none';
+      document.querySelector('#publicHome .home-actions').style.display = 'none';
+      return;
+    }
+    currentRound = res[0];
+    rounds = [currentRound];
+    currentProposals = await sbRest('triage_proposals?round_id=eq.' + currentRound.id + '&select=*&order=proposal_number.asc');
+    document.getElementById('publicRoundTitle').textContent = currentRound.name;
+    document.getElementById('publicRoundSubtitle').textContent = 'Hlasovaci kolo — vyber svych favoritů a odeslat.';
+    const meta = document.getElementById('publicRoundMeta');
+    meta.textContent = '';
+    const s1 = document.createElement('span');
+    s1.innerHTML = '<strong>' + currentProposals.length + '</strong> navrhů';
+    const s2 = document.createElement('span');
+    s2.innerHTML = '<strong>+' + currentRound.max_pos + '</strong> / <strong>−' + currentRound.max_neg + '</strong> hlasů';
+    meta.appendChild(s1); meta.appendChild(s2);
+    const canVote = currentProposals.length > 0;
+    document.getElementById('publicVoteBtn').disabled = !canVote;
+  } catch (e) {
+    console.error(e);
+    document.getElementById('publicRoundSubtitle').textContent = 'Chyba pri nacitani: ' + e.message;
+  }
+}
+
+async function bootAdmin() {
+  if (sessionStorage.getItem(ADMIN_SESSION_KEY) !== '1') {
+    showScreen('login');
+    document.getElementById('loginInput').focus();
+    return;
+  }
+  await loadAdminHome();
+}
+
+async function loadAdminHome() {
+  showScreen('home');
   const roundSelect = document.getElementById('roundSelect');
   roundSelect.textContent = '';
   const opt = document.createElement('option');
@@ -598,6 +796,9 @@ async function boot() {
       roundSelect.appendChild(o);
       document.getElementById('homeVoteBtn').disabled = true;
       document.getElementById('homeEvalBtn').disabled = true;
+      document.getElementById('shareRoundBtn').disabled = true;
+      document.getElementById('deleteRoundBtn').disabled = true;
+      currentRound = null;
       return;
     }
     renderRoundSelect();
@@ -610,6 +811,93 @@ async function boot() {
     roundSelect.appendChild(o);
   }
 }
+
+// ---------- login ----------
+async function tryLogin() {
+  const input = document.getElementById('loginInput');
+  const err = document.getElementById('loginErr');
+  const pass = input.value;
+  if (!pass) { err.textContent = 'Zadej heslo'; return; }
+  const hash = await sha256Hex(pass);
+  if (hash === ADMIN_PASSWORD_SHA256) {
+    sessionStorage.setItem(ADMIN_SESSION_KEY, '1');
+    err.textContent = '';
+    input.value = '';
+    await bootAdmin();
+    setModeBadge();
+  } else {
+    err.textContent = 'Nespravne heslo';
+    input.select();
+  }
+}
+
+document.getElementById('loginBtn').addEventListener('click', tryLogin);
+document.getElementById('loginInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') tryLogin();
+});
+
+// ---------- public home actions ----------
+document.getElementById('publicVoteBtn').addEventListener('click', startVoting);
+document.getElementById('publicEvalBtn').addEventListener('click', openEvaluate);
+
+// ---------- share / delete round (admin) ----------
+document.getElementById('shareRoundBtn').addEventListener('click', async () => {
+  if (!currentRound) return;
+  const link = shareLinkFor(currentRound);
+  try {
+    await navigator.clipboard.writeText(link);
+    toast('Odkaz zkopirovan: ' + link, { duration: 3500 });
+  } catch {
+    prompt('Zkopiruj odkaz:', link);
+  }
+});
+
+document.getElementById('deleteRoundBtn').addEventListener('click', async () => {
+  if (!currentRound) return;
+  const r = currentRound;
+  const votesCount = await (async () => {
+    try {
+      const head = await fetch(SUPABASE_URL + '/rest/v1/triage_votes?round_id=eq.' + r.id + '&select=id', {
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_KEY,
+          'Prefer': 'count=exact',
+          'Range-Unit': 'items',
+          'Range': '0-0'
+        }
+      });
+      const cr = head.headers.get('content-range') || '';
+      const m = cr.match(/\/(\d+|\*)$/);
+      return m && m[1] !== '*' ? parseInt(m[1]) : 0;
+    } catch { return 0; }
+  })();
+  const msg = 'Opravdu smazat kolo "' + r.name + '"?\n\n' +
+    '• ' + currentProposals.length + ' navrhů\n' +
+    '• ' + votesCount + ' hlasů\n\n' +
+    'Tato akce je NEVRATNA. Smazou se i vsechny uploadovane obrazky.';
+  if (!confirm(msg)) return;
+
+  try {
+    // Gather storage paths to cleanup
+    const paths = currentProposals.map(p => p.storage_path).filter(Boolean);
+
+    // Delete round (cascade: proposals + votes)
+    const res = await fetch(SUPABASE_URL + '/rest/v1/triage_rounds?id=eq.' + r.id, {
+      method: 'DELETE',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    if (!res.ok) throw new Error('DB delete failed: ' + res.status);
+
+    // Cleanup storage (best-effort, parallel)
+    await Promise.allSettled(paths.map(p => sbStorageDelete(p)));
+
+    toast('Kolo smazano.');
+    await loadAdminHome();
+  } catch (err) {
+    console.error(err);
+    toast('Chyba: ' + err.message, { error: true, duration: 4000 });
+  }
+});
 
 function renderRoundSelect() {
   const sel = document.getElementById('roundSelect');
@@ -1182,7 +1470,16 @@ document.getElementById('createRoundBtn').addEventListener('click', async () => 
     await pickRound(roundId);
     stagedFiles.forEach(s => URL.revokeObjectURL(s.previewUrl));
     stagedFiles = [];
-    setTimeout(() => { showScreen('home'); renderStaged(); }, 700);
+    const created = rounds.find(r => r.id === roundId);
+    const link = created ? shareLinkFor(created) : '';
+    setTimeout(() => {
+      showScreen('home');
+      renderStaged();
+      if (link) toast('Kolo vytvoreno. Odkaz zkopirovan.', { duration: 3500 });
+      if (link) {
+        try { navigator.clipboard.writeText(link); } catch {}
+      }
+    }, 700);
   } catch (err) {
     console.error(err);
     status.className = 'upload-status visible error';
