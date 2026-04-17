@@ -8,7 +8,9 @@
   :root {
     --bg: #0a0a0a;
     --surface: #141414;
+    --surface-2: #1c1c1c;
     --border: #222;
+    --border-strong: #333;
     --text: #e8e8e8;
     --muted: #777;
     --positive: #34d399;
@@ -16,6 +18,10 @@
     --negative: #f87171;
     --negative-bg: #2d0d0d;
     --accent: #818cf8;
+    --accent-bg: #1a1a3a;
+    --gold: #fbbf24;
+    --silver: #cbd5e1;
+    --bronze: #d97706;
     --radius: 12px;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -24,32 +30,76 @@
     background: var(--bg); color: var(--text);
     min-height: 100dvh; display: flex; flex-direction: column; align-items: center;
   }
-  button { font-family: inherit; cursor: pointer; border: none; }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+  a { color: var(--accent); text-decoration: none; }
 
-  /* SCREENS */
   .screen { display: none; width: 100%; max-width: 540px; padding: 20px; }
   #voting { max-width: 1000px; }
+  #evaluate { max-width: 1200px; padding: 20px 16px 60px; }
+  #newround { max-width: 720px; }
   .screen.active { display: flex; flex-direction: column; align-items: center; }
 
-  /* INTRO */
-  #intro { justify-content: center; min-height: 100dvh; gap: 32px; text-align: center; }
-  #intro h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
-  #intro p { color: var(--muted); font-size: 15px; line-height: 1.6; max-width: 400px; }
-  .name-input {
-    width: 100%; max-width: 320px; padding: 14px 18px; border-radius: var(--radius);
+  .page-header {
+    width: 100%; display: flex; align-items: center; justify-content: space-between;
+    gap: 12px; padding-bottom: 16px;
+  }
+  .back-btn {
+    padding: 8px 14px; border-radius: 8px; background: var(--surface);
+    border: 1px solid var(--border); color: var(--muted); font-size: 13px;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .back-btn:hover { color: var(--text); border-color: var(--border-strong); }
+  .page-title { font-size: 20px; font-weight: 700; flex: 1; text-align: center; }
+  .page-spacer { width: 72px; }
+
+  #home { justify-content: center; min-height: 100dvh; gap: 28px; text-align: center; }
+  #home h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.5px; }
+  #home .subtitle { color: var(--muted); font-size: 15px; line-height: 1.6; max-width: 400px; }
+  .round-picker {
+    width: 100%; display: flex; flex-direction: column; gap: 8px; margin-top: 8px;
+  }
+  .round-picker label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .round-select {
+    width: 100%; padding: 14px 16px; border-radius: var(--radius);
     background: var(--surface); border: 2px solid var(--border); color: var(--text);
-    font-size: 16px; text-align: center; outline: none; transition: border-color 0.2s;
+    font-size: 15px; outline: none; appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23777' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-repeat: no-repeat; background-position: right 16px center; padding-right: 44px;
+    cursor: pointer;
+  }
+  .round-select:focus { border-color: var(--accent); }
+  .round-meta { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .home-actions {
+    width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px;
+  }
+  .home-secondary {
+    width: 100%; display: flex; gap: 10px; margin-top: 4px;
+  }
+  .btn {
+    padding: 14px 20px; border-radius: var(--radius); font-size: 15px; font-weight: 600;
+    transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    border: 2px solid transparent;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { opacity: 0.88; }
+  .btn-primary:disabled { opacity: 0.3; cursor: not-allowed; }
+  .btn-secondary {
+    background: var(--surface); color: var(--text); border-color: var(--border);
+  }
+  .btn-secondary:hover { border-color: var(--border-strong); }
+  .btn-ghost {
+    background: transparent; color: var(--muted); border-color: var(--border); flex: 1;
+  }
+  .btn-ghost:hover { color: var(--text); border-color: var(--border-strong); }
+
+  .name-input {
+    width: 100%; padding: 14px 18px; border-radius: var(--radius);
+    background: var(--surface); border: 2px solid var(--border); color: var(--text);
+    font-size: 16px; outline: none; transition: border-color 0.2s; text-align: center;
   }
   .name-input:focus { border-color: var(--accent); }
   .name-input::placeholder { color: #555; }
-  .btn-primary {
-    padding: 14px 40px; border-radius: var(--radius); background: var(--accent);
-    color: #fff; font-size: 16px; font-weight: 600; transition: opacity 0.2s;
-  }
-  .btn-primary:hover { opacity: 0.85; }
-  .btn-primary:disabled { opacity: 0.3; cursor: not-allowed; }
 
-  /* RULES */
   #rules { justify-content: center; min-height: 100dvh; gap: 28px; text-align: center; }
   #rules h2 { font-size: 24px; font-weight: 700; }
   .rules-list { text-align: left; list-style: none; display: flex; flex-direction: column; gap: 14px; width: 100%; }
@@ -60,11 +110,8 @@
   .rules-list .icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
   .welcome-name { color: var(--accent); font-weight: 600; }
 
-  /* VOTING */
   #voting { padding-top: 12px; gap: 16px; min-height: 100dvh; padding-left: 12px; padding-right: 12px; }
-  .progress-bar {
-    width: 100%; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden;
-  }
+  .progress-bar { width: 100%; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
   .progress-fill { height: 100%; background: var(--accent); transition: width 0.3s ease; border-radius: 2px; }
   .vote-header {
     display: flex; justify-content: space-between; align-items: center; width: 100%;
@@ -74,9 +121,7 @@
   .counter { display: flex; align-items: center; gap: 4px; font-weight: 600; }
   .counter.pos { color: var(--positive); }
   .counter.neg { color: var(--negative); }
-  .counter .dot {
-    width: 8px; height: 8px; border-radius: 50%; display: inline-block;
-  }
+  .counter .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
   .counter.pos .dot { background: var(--positive); }
   .counter.neg .dot { background: var(--negative); }
 
@@ -86,34 +131,22 @@
   }
   .proposal-card.voted-pos { border-color: var(--positive); }
   .proposal-card.voted-neg { border-color: var(--negative); }
-  .proposal-img {
-    width: 100%; object-fit: contain; background: #000;
-    display: block; max-height: 75dvh;
-  }
-  .proposal-label {
-    padding: 14px 18px; display: flex; justify-content: space-between; align-items: center;
-  }
+  .proposal-img { width: 100%; object-fit: contain; background: #000; display: block; max-height: 75dvh; }
+  .proposal-label { padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; }
   .proposal-number { font-size: 18px; font-weight: 700; }
   .proposal-file { font-size: 12px; color: var(--muted); }
 
-  .vote-actions {
-    display: flex; gap: 12px; width: 100%;
-  }
+  .vote-actions { display: flex; gap: 12px; width: 100%; }
   .vote-btn {
     flex: 1; padding: 16px; border-radius: var(--radius); font-size: 15px; font-weight: 600;
     display: flex; align-items: center; justify-content: center; gap: 8px;
     transition: all 0.2s; border: 2px solid transparent;
   }
-  .vote-btn.like {
-    background: var(--positive-bg); color: var(--positive); border-color: #1a4a30;
-  }
+  .vote-btn.like { background: var(--positive-bg); color: var(--positive); border-color: #1a4a30; }
   .vote-btn.like:hover { border-color: var(--positive); }
   .vote-btn.like:disabled { opacity: 0.25; cursor: not-allowed; }
   .vote-btn.like.selected { background: var(--positive); color: #000; border-color: var(--positive); }
-
-  .vote-btn.dislike {
-    background: var(--negative-bg); color: var(--negative); border-color: #4a1a1a;
-  }
+  .vote-btn.dislike { background: var(--negative-bg); color: var(--negative); border-color: #4a1a1a; }
   .vote-btn.dislike:hover { border-color: var(--negative); }
   .vote-btn.dislike:disabled { opacity: 0.25; cursor: not-allowed; }
   .vote-btn.dislike.selected { background: var(--negative); color: #000; border-color: var(--negative); }
@@ -128,25 +161,20 @@
   .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
   .nav-btn.finish { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
   .nav-btn.finish:hover { opacity: 0.85; }
+  .swipe-hint { color: var(--muted); font-size: 12px; text-align: center; opacity: 0.6; }
 
-  /* RESULTS */
   #results { padding-top: 24px; gap: 20px; padding-bottom: 40px; }
   #results h2 { font-size: 24px; font-weight: 700; text-align: center; }
-  .results-summary {
-    text-align: center; color: var(--muted); font-size: 14px; line-height: 1.6;
-  }
-  .results-grid { width: 100%; display: flex; flex-direction: column; gap: 8px; }
+  .results-summary { text-align: center; color: var(--muted); font-size: 14px; line-height: 1.6; }
+  .results-grid-list { width: 100%; display: flex; flex-direction: column; gap: 8px; }
   .result-row {
     display: flex; align-items: center; gap: 12px; padding: 12px 16px;
     background: var(--surface); border-radius: var(--radius); border: 2px solid var(--border);
-    transition: border-color 0.3s;
   }
   .result-row.winner { border-color: var(--positive); }
   .result-row .rank { font-size: 14px; font-weight: 700; color: var(--muted); min-width: 28px; }
   .result-row.winner .rank { color: var(--positive); }
-  .result-row .thumb {
-    width: 56px; height: 42px; border-radius: 6px; object-fit: cover; background: #000;
-  }
+  .result-row .thumb { width: 56px; height: 42px; border-radius: 6px; object-fit: cover; background: #000; }
   .result-row .info { flex: 1; }
   .result-row .info .name { font-size: 14px; font-weight: 600; }
   .result-bar-wrap { height: 6px; background: var(--border); border-radius: 3px; margin-top: 4px; overflow: hidden; }
@@ -174,48 +202,197 @@
   .voter-row .voter-name { font-weight: 600; }
   .voter-row .voter-stats { color: var(--muted); font-size: 13px; }
 
-  /* Loading */
+  .evaluate-summary {
+    width: 100%; text-align: center; color: var(--muted); font-size: 14px;
+    margin-bottom: 12px; line-height: 1.6;
+  }
+  .evaluate-controls {
+    width: 100%; display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 16px; gap: 12px; flex-wrap: wrap;
+  }
+  .toggle {
+    display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted);
+    cursor: pointer; user-select: none;
+  }
+  .toggle input { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
+
+  .evaluate-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+  }
+  @media (min-width: 640px) {
+    .evaluate-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+  }
+  .eval-card {
+    position: relative; background: var(--surface); border-radius: var(--radius);
+    overflow: hidden; border: 2px solid var(--border); transition: all 0.2s;
+    display: flex; flex-direction: column;
+  }
+  .eval-card.gold   { border-color: var(--gold);   box-shadow: 0 0 0 1px var(--gold), 0 8px 24px rgba(251,191,36,0.12); }
+  .eval-card.silver { border-color: var(--silver); box-shadow: 0 0 0 1px var(--silver), 0 8px 24px rgba(203,213,225,0.1); }
+  .eval-card.bronze { border-color: var(--bronze); box-shadow: 0 0 0 1px var(--bronze), 0 8px 24px rgba(217,119,6,0.1); }
+  .eval-img-wrap {
+    position: relative; width: 100%; aspect-ratio: 1/1; background: #000; overflow: hidden;
+  }
+  .eval-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .eval-score-box {
+    position: absolute; top: 8px; left: 8px;
+    background: #dc1e1e; color: #fff; font-weight: 700;
+    padding: 6px 10px; border-radius: 6px;
+    font-size: 13px; letter-spacing: 0.3px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    display: flex; flex-direction: column; gap: 2px; line-height: 1.1;
+  }
+  .eval-score-box .big { font-size: 16px; font-weight: 800; }
+  .eval-score-box .small { font-size: 10px; font-weight: 600; opacity: 0.95; }
+  .eval-medal {
+    position: absolute; top: 8px; right: 8px;
+    background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+    border-radius: 999px; padding: 6px 10px;
+    font-size: 20px; display: inline-flex; align-items: center; gap: 6px;
+    line-height: 1;
+  }
+  .eval-medal .label { font-size: 11px; font-weight: 800; letter-spacing: 0.5px; color: #fff; }
+  .eval-medal.gold .label   { color: var(--gold); }
+  .eval-medal.silver .label { color: var(--silver); }
+  .eval-medal.bronze .label { color: var(--bronze); }
+
+  .eval-footer {
+    padding: 10px 12px; display: flex; align-items: center; justify-content: space-between;
+    gap: 6px; font-size: 12px; border-top: 1px solid var(--border);
+  }
+  .eval-footer .rank-info { color: var(--muted); font-weight: 600; }
+  .eval-footer .rank-info strong { color: var(--text); }
+  .eval-footer .delete-btn {
+    padding: 6px 10px; background: var(--negative-bg); color: var(--negative);
+    border: 1px solid #4a1a1a; border-radius: 6px; font-size: 11px; font-weight: 600;
+    display: none;
+  }
+  .eval-card.editable .eval-footer .delete-btn { display: inline-block; }
+  .eval-footer .delete-btn:hover { border-color: var(--negative); }
+
+  .eval-empty {
+    width: 100%; padding: 60px 20px; text-align: center; color: var(--muted);
+    background: var(--surface); border-radius: var(--radius); border: 1px dashed var(--border);
+  }
+  .eval-add-card {
+    display: none; min-height: 220px; align-items: center; justify-content: center;
+    border: 2px dashed var(--border); border-radius: var(--radius); background: var(--surface);
+    color: var(--muted); font-size: 14px; font-weight: 600; cursor: pointer;
+    transition: all 0.2s; aspect-ratio: 1/1;
+  }
+  .eval-add-card:hover { color: var(--accent); border-color: var(--accent); }
+  .eval-add-card.visible { display: flex; }
+
+  #newround { gap: 18px; padding-top: 16px; padding-bottom: 60px; }
+  .field { width: 100%; display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .field .hint { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .input {
+    padding: 12px 14px; border-radius: var(--radius);
+    background: var(--surface); border: 2px solid var(--border); color: var(--text);
+    font-size: 15px; outline: none; transition: border-color 0.2s;
+  }
+  .input:focus { border-color: var(--accent); }
+
+  .dropzone {
+    width: 100%; min-height: 200px; border: 2px dashed var(--border);
+    border-radius: var(--radius); background: var(--surface);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 10px; padding: 30px 20px; cursor: pointer; transition: all 0.2s;
+    text-align: center;
+  }
+  .dropzone:hover, .dropzone.drag { border-color: var(--accent); background: var(--accent-bg); }
+  .dropzone .dz-icon { font-size: 36px; opacity: 0.7; }
+  .dropzone .dz-text { font-size: 15px; font-weight: 600; }
+  .dropzone .dz-hint { font-size: 12px; color: var(--muted); }
+
+  .upload-list {
+    width: 100%; display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+  }
+  .upload-item {
+    position: relative; aspect-ratio: 1/1; background: #000; border-radius: 8px;
+    overflow: hidden; border: 1px solid var(--border);
+  }
+  .upload-item img { width: 100%; height: 100%; object-fit: cover; }
+  .upload-item .remove {
+    position: absolute; top: 6px; right: 6px; width: 24px; height: 24px;
+    border-radius: 50%; background: rgba(0,0,0,0.8); color: #fff;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; cursor: pointer;
+  }
+  .upload-item .remove:hover { background: var(--negative); }
+  .upload-item .badge {
+    position: absolute; bottom: 4px; left: 4px;
+    background: rgba(0,0,0,0.7); color: #fff; padding: 2px 6px; border-radius: 4px;
+    font-size: 10px; font-weight: 700;
+  }
+  .upload-status {
+    width: 100%; padding: 12px 14px; border-radius: var(--radius);
+    background: var(--surface); border: 1px solid var(--border); font-size: 13px;
+    display: none;
+  }
+  .upload-status.visible { display: block; }
+  .upload-status.error { border-color: var(--negative); color: var(--negative); }
+
   .spinner {
     width: 24px; height: 24px; border: 3px solid var(--border);
     border-top-color: var(--accent); border-radius: 50%;
     animation: spin 0.8s linear infinite; margin: 20px auto;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* Swipe hint */
-  .swipe-hint { color: var(--muted); font-size: 12px; text-align: center; opacity: 0.6; }
 </style>
 </head>
 <body>
 
-<!-- INTRO -->
-<div id="intro" class="screen active">
+<!-- HOME -->
+<div id="home" class="screen active">
   <h1>Triage Vote</h1>
-  <p>Hlasovaci system pro vyber navrhů. Zadej sve jmeno a zacni hlasovat.</p>
-  <input type="text" class="name-input" id="nameInput" placeholder="Tvoje jmeno" maxlength="30" autocomplete="off">
-  <button class="btn-primary" id="startBtn" disabled>Pokracovat</button>
+  <p class="subtitle">Hlasovaci system pro vyber navrhů. Vyber kolo a zacni hlasovat — nebo zaloz nove.</p>
+
+  <div class="round-picker">
+    <label>Kolo hlasovani</label>
+    <select id="roundSelect" class="round-select"></select>
+    <div class="round-meta" id="roundMeta"></div>
+  </div>
+
+  <div class="home-actions">
+    <button class="btn btn-primary" id="homeVoteBtn">Hlasovat</button>
+    <button class="btn btn-secondary" id="homeEvalBtn">Vyhodnotit</button>
+  </div>
+  <div class="home-secondary">
+    <button class="btn btn-ghost" id="homeNewRoundBtn">+ Nove hlasovani</button>
+  </div>
 </div>
 
 <!-- RULES -->
 <div id="rules" class="screen">
-  <h2>Pravidla hlasovani</h2>
-  <p>Vitej, <span class="welcome-name" id="welcomeName"></span></p>
-  <ul class="rules-list">
-    <li><span class="icon">🖼</span><span>Projdes <strong>36 navrhů</strong> — kazdy je ocislovany (1–36)</span></li>
-    <li><span class="icon">👍</span><span>Mas <strong>3 pozitivni hlasy</strong> — pro navrhy, ktere se ti libi</span></li>
-    <li><span class="icon">👎</span><span>Mas <strong>3 negativni hlasy</strong> — pro navrhy, ktere se ti vylozene nelibi</span></li>
-    <li><span class="icon">⏭</span><span>Ostatni navrhy muzes preskocit — neni nutne hlasovat u vsech</span></li>
-    <li><span class="icon">🔄</span><span>Hlasy muzes menit dokud nedas <strong>Odeslat</strong></span></li>
-    <li><span class="icon">📊</span><span>Na konci uvidis celkove vysledky ze vsech hlasujicich</span></li>
-  </ul>
-  <button class="btn-primary" id="rulesBtn">Zacit hlasovat</button>
+  <div class="page-header">
+    <button class="back-btn" data-back="home">← Zpet</button>
+    <div class="page-title">Pravidla</div>
+    <div class="page-spacer"></div>
+  </div>
+  <div style="text-align:center; display:flex; flex-direction:column; gap:24px; align-items:center;">
+    <h2 id="rulesHeading">Pravidla hlasovani</h2>
+    <p>Vitej, <span class="welcome-name" id="welcomeName"></span></p>
+    <ul class="rules-list" id="rulesList"></ul>
+    <button class="btn btn-primary" id="rulesBtn">Zacit hlasovat</button>
+  </div>
 </div>
 
 <!-- VOTING -->
 <div id="voting" class="screen">
+  <div class="page-header">
+    <button class="back-btn" data-back="home">← Zpet</button>
+    <div class="page-title" id="votingRoundName">Hlasovani</div>
+    <div class="page-spacer"></div>
+  </div>
   <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
   <div class="vote-header">
-    <span id="proposalCounter">1 / 36</span>
+    <span id="proposalCounter">1 / 1</span>
     <div class="vote-counters">
       <span class="counter pos"><span class="dot"></span> <span id="posLeft">3</span></span>
       <span class="counter neg"><span class="dot"></span> <span id="negLeft">3</span></span>
@@ -244,96 +421,299 @@
 
 <!-- RESULTS -->
 <div id="results" class="screen">
-  <h2>Vysledky hlasovani</h2>
+  <div class="page-header">
+    <button class="back-btn" data-back="home">← Zpet</button>
+    <div class="page-title">Vysledky</div>
+    <div class="page-spacer"></div>
+  </div>
   <div class="results-summary" id="resultsSummary"></div>
   <div class="tab-bar">
     <button class="tab-btn active" data-tab="ranking">Poradi navrhů</button>
     <button class="tab-btn" data-tab="voters">Hlasujici</button>
   </div>
-  <div id="rankingTab" class="results-grid"></div>
+  <div id="rankingTab" class="results-grid-list"></div>
   <div id="votersTab" class="voters-list" style="display:none"></div>
+</div>
+
+<!-- EVALUATE -->
+<div id="evaluate" class="screen">
+  <div class="page-header">
+    <button class="back-btn" data-back="home">← Zpet</button>
+    <div class="page-title" id="evalRoundName">Vyhodnoceni</div>
+    <div class="page-spacer"></div>
+  </div>
+  <div class="evaluate-summary" id="evalSummary"></div>
+  <div class="evaluate-controls">
+    <label class="toggle">
+      <input type="checkbox" id="showAllToggle">
+      <span>Zobrazit i navrhy bez hlasu</span>
+    </label>
+    <label class="toggle">
+      <input type="checkbox" id="editModeToggle">
+      <span>✏️ Upravovat (pridat / smazat)</span>
+    </label>
+  </div>
+  <div class="evaluate-grid" id="evalGrid"></div>
+  <input type="file" id="evalAddInput" accept="image/*" multiple style="display:none">
+</div>
+
+<!-- NEW ROUND -->
+<div id="newround" class="screen">
+  <div class="page-header">
+    <button class="back-btn" data-back="home">← Zpet</button>
+    <div class="page-title">Nove hlasovani</div>
+    <div class="page-spacer"></div>
+  </div>
+
+  <div class="field">
+    <label>Nazev kola</label>
+    <input type="text" class="input" id="newRoundName" placeholder="Napr. Merch Munchen — 02" maxlength="80">
+  </div>
+
+  <div class="field" style="flex-direction: row; gap: 12px;">
+    <div style="flex:1;">
+      <label>Max kladnych hlasů / uzivatel</label>
+      <input type="number" class="input" id="newRoundMaxPos" value="3" min="1" max="99">
+    </div>
+    <div style="flex:1;">
+      <label>Max zapornych hlasů / uzivatel</label>
+      <input type="number" class="input" id="newRoundMaxNeg" value="3" min="0" max="99">
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Obrazky (2 az 100)</label>
+    <div class="dropzone" id="dropzone">
+      <div class="dz-icon">📂</div>
+      <div class="dz-text">Pretahni sem obrazky nebo klikni</div>
+      <div class="dz-hint">JPG / PNG / WebP / GIF &middot; max 10 MB za obrazek</div>
+    </div>
+    <input type="file" id="dropInput" accept="image/*" multiple style="display:none">
+  </div>
+
+  <div class="upload-list" id="uploadList"></div>
+  <div class="upload-status" id="uploadStatus"></div>
+
+  <button class="btn btn-primary" id="createRoundBtn" style="width:100%; margin-top: 8px;" disabled>Vytvorit hlasovani</button>
 </div>
 
 <script>
 const SUPABASE_URL = 'https://kwkqqwpipsfzweopipoa.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt3a3Fxd3BpcHNmendlb3BpcG9hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5MDE3NDMsImV4cCI6MjA5MDQ3Nzc0M30.qgVJ_8kPqibSaiw6u3KHx8E0DSeTQerfPnrMnzVIbaQ';
+const BUCKET = 'triage-images';
 
-const TOTAL = 36;
-// Image files: merch_munchen-02.jpg to merch_munchen-37.jpg
-const proposals = Array.from({ length: TOTAL }, (_, i) => ({
-  number: i + 1,
-  file: `merch_munchen-${String(i + 2).padStart(2, '0')}.jpg`,
-  src: `zdroje-01/merch_munchen-${String(i + 2).padStart(2, '0')}.jpg`
-}));
+// ---------- helpers ----------
+function esc(s) {
+  if (s === null || s === undefined) return '';
+  return String(s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
 
-let voterName = '';
-let currentIndex = 0;
-let votes = {}; // { proposalNumber: 1 | -1 }
-const MAX_POS = 3;
-const MAX_NEG = 3;
-
-// Supabase REST helpers
-async function sbFetch(path, options = {}) {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-    headers: {
+async function sbRest(path, options) {
+  options = options || {};
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, {
+    headers: Object.assign({
       'apikey': SUPABASE_KEY,
-      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
       'Content-Type': 'application/json',
-      'Prefer': options.prefer || 'return=representation',
-      ...options.headers
-    },
+      'Prefer': options.prefer || 'return=representation'
+    }, options.headers || {}),
     method: options.method || 'GET',
     body: options.body ? JSON.stringify(options.body) : undefined
   });
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Supabase error: ${res.status} ${err}`);
-  }
+  if (!res.ok) throw new Error(res.status + ': ' + await res.text());
   const text = await res.text();
   return text ? JSON.parse(text) : null;
 }
 
-// SCREEN NAVIGATION
+async function sbStorageUpload(path, file) {
+  const res = await fetch(SUPABASE_URL + '/storage/v1/object/' + BUCKET + '/' + path, {
+    method: 'POST',
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Content-Type': file.type || 'application/octet-stream',
+      'x-upsert': 'false'
+    },
+    body: file
+  });
+  if (!res.ok) throw new Error('Upload failed: ' + res.status + ' ' + await res.text());
+  return SUPABASE_URL + '/storage/v1/object/public/' + BUCKET + '/' + path;
+}
+
+async function sbStorageDelete(path) {
+  const res = await fetch(SUPABASE_URL + '/storage/v1/object/' + BUCKET + '/' + path, {
+    method: 'DELETE',
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+  });
+  if (!res.ok && res.status !== 404) throw new Error('Delete failed: ' + res.status);
+}
+
+function resolveImageUrl(proposal) {
+  const u = proposal && proposal.image_url || '';
+  return u;
+}
+
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 0 });
 }
 
-// INTRO
-const nameInput = document.getElementById('nameInput');
-const startBtn = document.getElementById('startBtn');
-nameInput.addEventListener('input', () => {
-  startBtn.disabled = !nameInput.value.trim();
+document.querySelectorAll('[data-back]').forEach(btn => {
+  btn.addEventListener('click', () => showScreen(btn.dataset.back));
 });
-nameInput.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && nameInput.value.trim()) goToRules();
-});
-startBtn.addEventListener('click', goToRules);
 
-async function goToRules() {
-  voterName = nameInput.value.trim();
-  document.getElementById('welcomeName').textContent = voterName;
+function slugify(s) {
+  return s.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60) || 'round';
+}
 
-  // Load any existing votes for this user
+// ---------- state ----------
+let rounds = [];
+let currentRound = null;
+let currentProposals = [];
+let voterName = '';
+let votes = {};
+let currentIndex = 0;
+let stagedFiles = [];
+
+// ---------- boot ----------
+async function boot() {
+  const roundSelect = document.getElementById('roundSelect');
+  roundSelect.textContent = '';
+  const opt = document.createElement('option');
+  opt.textContent = 'Nacitam...';
+  roundSelect.appendChild(opt);
   try {
-    const existing = await sbFetch(`triage_votes?voter_name=eq.${encodeURIComponent(voterName)}&select=proposal_number,vote`);
-    if (existing && existing.length > 0) {
-      existing.forEach(v => { votes[v.proposal_number] = v.vote; });
+    rounds = await sbRest('triage_rounds?select=*&order=created_at.desc');
+    if (!rounds || rounds.length === 0) {
+      roundSelect.textContent = '';
+      const o = document.createElement('option');
+      o.textContent = 'Zadne kolo zatim';
+      roundSelect.appendChild(o);
+      document.getElementById('homeVoteBtn').disabled = true;
+      document.getElementById('homeEvalBtn').disabled = true;
+      return;
     }
+    renderRoundSelect();
+    await pickRound(rounds[0].id);
   } catch (e) {
-    console.warn('Could not load existing votes:', e);
+    console.error('Boot:', e);
+    roundSelect.textContent = '';
+    const o = document.createElement('option');
+    o.textContent = 'Chyba pri nacitani';
+    roundSelect.appendChild(o);
   }
+}
+
+function renderRoundSelect() {
+  const sel = document.getElementById('roundSelect');
+  sel.textContent = '';
+  rounds.forEach(r => {
+    const opt = document.createElement('option');
+    opt.value = r.id;
+    opt.textContent = r.name;
+    sel.appendChild(opt);
+  });
+}
+
+async function pickRound(id) {
+  currentRound = rounds.find(r => r.id === id);
+  if (!currentRound) return;
+  document.getElementById('roundSelect').value = id;
+  try {
+    currentProposals = await sbRest('triage_proposals?round_id=eq.' + id + '&select=*&order=proposal_number.asc');
+  } catch (e) {
+    console.error(e);
+    currentProposals = [];
+  }
+  document.getElementById('roundMeta').textContent =
+    currentProposals.length + ' navrhů · +' + currentRound.max_pos + ' / −' + currentRound.max_neg + ' hlasů';
+  const canVote = currentProposals.length > 0;
+  document.getElementById('homeVoteBtn').disabled = !canVote;
+  document.getElementById('homeEvalBtn').disabled = false;
+}
+
+document.getElementById('roundSelect').addEventListener('change', (e) => {
+  pickRound(e.target.value);
+});
+
+// ---------- home ----------
+document.getElementById('homeVoteBtn').addEventListener('click', startVoting);
+document.getElementById('homeEvalBtn').addEventListener('click', openEvaluate);
+document.getElementById('homeNewRoundBtn').addEventListener('click', () => {
+  resetNewRound();
+  showScreen('newround');
+});
+
+// ---------- voting ----------
+async function startVoting() {
+  if (!currentRound) return;
+  const existing = sessionStorage.getItem('triage_voter') || '';
+  const nameRaw = prompt('Zadej sve jmeno:', existing);
+  if (!nameRaw) return;
+  voterName = nameRaw.trim();
+  if (!voterName) return;
+  sessionStorage.setItem('triage_voter', voterName);
+
+  votes = {};
+  currentIndex = 0;
+  try {
+    const existing = await sbRest(
+      'triage_votes?voter_name=eq.' + encodeURIComponent(voterName) +
+      '&round_id=eq.' + currentRound.id + '&select=proposal_number,vote'
+    );
+    (existing || []).forEach(v => { votes[v.proposal_number] = v.vote; });
+  } catch (e) { console.warn(e); }
+
+  document.getElementById('welcomeName').textContent = voterName;
+  document.getElementById('votingRoundName').textContent = currentRound.name;
+
+  const rulesList = document.getElementById('rulesList');
+  rulesList.textContent = '';
+  const rulesData = [
+    ['🖼', 'Projdes ', currentProposals.length + ' navrhů', ' v kole '],
+    ['👍', 'Mas ', currentRound.max_pos + ' pozitivnich hlasů', ' — pro navrhy, ktere se ti libi'],
+    ['👎', 'Mas ', currentRound.max_neg + ' negativnich hlasů', ' — pro navrhy, ktere se ti nelibi']
+  ];
+  rulesData.forEach(([ico, a, strong, b]) => {
+    const li = document.createElement('li');
+    const sIcon = document.createElement('span'); sIcon.className = 'icon'; sIcon.textContent = ico;
+    const sBody = document.createElement('span');
+    sBody.appendChild(document.createTextNode(a));
+    const st = document.createElement('strong'); st.textContent = strong;
+    sBody.appendChild(st);
+    sBody.appendChild(document.createTextNode(b));
+    if (ico === '🖼') {
+      const em = document.createElement('em'); em.textContent = currentRound.name;
+      sBody.appendChild(em);
+    }
+    li.appendChild(sIcon); li.appendChild(sBody);
+    rulesList.appendChild(li);
+  });
+  ['⏭ Ostatni navrhy muzes preskocit',
+   '🔄 Hlasy muzes menit dokud nedas Odeslat',
+   '📊 Na konci uvidis celkove vysledky'].forEach(t => {
+    const li = document.createElement('li');
+    const sIcon = document.createElement('span'); sIcon.className = 'icon'; sIcon.textContent = t.slice(0, 2).trim();
+    const sBody = document.createElement('span'); sBody.textContent = t.slice(2).trim();
+    li.appendChild(sIcon); li.appendChild(sBody);
+    rulesList.appendChild(li);
+  });
 
   showScreen('rules');
 }
 
-// RULES
 document.getElementById('rulesBtn').addEventListener('click', () => {
   showScreen('voting');
   renderProposal();
 });
 
-// VOTING
 const proposalImg = document.getElementById('proposalImg');
 const proposalNum = document.getElementById('proposalNum');
 const proposalFile = document.getElementById('proposalFile');
@@ -352,33 +732,31 @@ function countVotes(type) {
 }
 
 function renderProposal() {
-  const p = proposals[currentIndex];
-  proposalImg.src = p.src;
-  proposalImg.alt = `Navrh #${p.number}`;
-  proposalNum.textContent = `#${p.number}`;
-  proposalFile.textContent = p.file;
-  counterEl.textContent = `${currentIndex + 1} / ${TOTAL}`;
-  progressFill.style.width = `${((currentIndex + 1) / TOTAL) * 100}%`;
+  const p = currentProposals[currentIndex];
+  if (!p) return;
+  const total = currentProposals.length;
+  proposalImg.src = resolveImageUrl(p);
+  proposalImg.alt = 'Navrh #' + p.proposal_number;
+  proposalNum.textContent = '#' + p.proposal_number;
+  const fileName = (p.image_url || '').split('/').pop() || '';
+  proposalFile.textContent = fileName;
+  counterEl.textContent = (currentIndex + 1) + ' / ' + total;
+  progressFill.style.width = (((currentIndex + 1) / total) * 100) + '%';
 
-  const currentVote = votes[p.number] || 0;
-  proposalCard.className = 'proposal-card' +
-    (currentVote === 1 ? ' voted-pos' : currentVote === -1 ? ' voted-neg' : '');
-
-  likeBtn.classList.toggle('selected', currentVote === 1);
-  dislikeBtn.classList.toggle('selected', currentVote === -1);
+  const cv = votes[p.proposal_number] || 0;
+  proposalCard.className = 'proposal-card' + (cv === 1 ? ' voted-pos' : cv === -1 ? ' voted-neg' : '');
+  likeBtn.classList.toggle('selected', cv === 1);
+  dislikeBtn.classList.toggle('selected', cv === -1);
 
   const posUsed = countVotes(1);
   const negUsed = countVotes(-1);
-  posLeft.textContent = MAX_POS - posUsed;
-  negLeft.textContent = MAX_NEG - negUsed;
-
-  likeBtn.disabled = currentVote !== 1 && posUsed >= MAX_POS;
-  dislikeBtn.disabled = currentVote !== -1 && negUsed >= MAX_NEG;
-
+  posLeft.textContent = currentRound.max_pos - posUsed;
+  negLeft.textContent = currentRound.max_neg - negUsed;
+  likeBtn.disabled = cv !== 1 && posUsed >= currentRound.max_pos;
+  dislikeBtn.disabled = cv !== -1 && negUsed >= currentRound.max_neg;
   prevBtn.disabled = currentIndex === 0;
 
-  // Show "Odeslat" on last proposal
-  if (currentIndex === TOTAL - 1) {
+  if (currentIndex === total - 1) {
     nextBtn.textContent = 'Odeslat hlasy ✓';
     nextBtn.classList.add('finish');
   } else {
@@ -388,39 +766,25 @@ function renderProposal() {
 }
 
 function toggleVote(type) {
-  const p = proposals[currentIndex];
-  if (votes[p.number] === type) {
-    delete votes[p.number];
-  } else {
-    votes[p.number] = type;
-  }
+  const p = currentProposals[currentIndex];
+  if (!p) return;
+  if (votes[p.proposal_number] === type) delete votes[p.proposal_number];
+  else votes[p.proposal_number] = type;
   renderProposal();
 }
 
 likeBtn.addEventListener('click', () => toggleVote(1));
 dislikeBtn.addEventListener('click', () => toggleVote(-1));
-
-prevBtn.addEventListener('click', () => {
-  if (currentIndex > 0) { currentIndex--; renderProposal(); }
-});
-
+prevBtn.addEventListener('click', () => { if (currentIndex > 0) { currentIndex--; renderProposal(); } });
 nextBtn.addEventListener('click', () => {
-  if (currentIndex < TOTAL - 1) {
-    currentIndex++;
-    renderProposal();
-  } else {
-    submitVotes();
-  }
+  if (currentIndex < currentProposals.length - 1) { currentIndex++; renderProposal(); }
+  else submitVotes();
 });
 
-// Keyboard navigation
 document.addEventListener('keydown', (e) => {
-  const voting = document.getElementById('voting');
-  if (!voting.classList.contains('active')) return;
+  if (!document.getElementById('voting').classList.contains('active')) return;
   if (e.key === 'ArrowLeft' && currentIndex > 0) { currentIndex--; renderProposal(); }
-  if (e.key === 'ArrowRight') {
-    if (currentIndex < TOTAL - 1) { currentIndex++; renderProposal(); }
-  }
+  if (e.key === 'ArrowRight' && currentIndex < currentProposals.length - 1) { currentIndex++; renderProposal(); }
   if (e.key === 'ArrowUp' && !likeBtn.disabled) toggleVote(1);
   if (e.key === 'ArrowDown' && !dislikeBtn.disabled) toggleVote(-1);
 });
@@ -428,37 +792,33 @@ document.addEventListener('keydown', (e) => {
 async function submitVotes() {
   nextBtn.disabled = true;
   nextBtn.textContent = 'Odesilam...';
-
   try {
-    // Upsert votes (safe — no deletes, conflict on unique constraint)
     const voteRows = Object.entries(votes).map(([num, vote]) => ({
       voter_name: voterName,
+      round_id: currentRound.id,
       proposal_number: parseInt(num),
       vote: vote
     }));
-
     if (voteRows.length > 0) {
-      await sbFetch('triage_votes', {
+      await sbRest('triage_votes', {
         method: 'POST',
         body: voteRows,
         headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
         prefer: 'resolution=merge-duplicates,return=minimal'
       });
     }
-
-    showScreen('results');
     loadResults();
+    showScreen('results');
   } catch (e) {
-    console.error('Submit error:', e);
+    console.error(e);
     nextBtn.disabled = false;
     nextBtn.textContent = 'Chyba — zkusit znovu';
   }
 }
 
-// RESULTS
-const tabBtns = document.querySelectorAll('.tab-btn');
-tabBtns.forEach(btn => btn.addEventListener('click', () => {
-  tabBtns.forEach(b => b.classList.remove('active'));
+// ---------- results (list) ----------
+document.querySelectorAll('.tab-btn').forEach(btn => btn.addEventListener('click', () => {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById('rankingTab').style.display = btn.dataset.tab === 'ranking' ? '' : 'none';
   document.getElementById('votersTab').style.display = btn.dataset.tab === 'voters' ? '' : 'none';
@@ -468,89 +828,381 @@ async function loadResults() {
   const rankingTab = document.getElementById('rankingTab');
   const votersTab = document.getElementById('votersTab');
   const summary = document.getElementById('resultsSummary');
-
-  rankingTab.innerHTML = '<div class="spinner"></div>';
-
+  rankingTab.textContent = '';
+  const spin = document.createElement('div'); spin.className = 'spinner';
+  rankingTab.appendChild(spin);
   try {
-    const allVotes = await sbFetch('triage_votes?select=voter_name,proposal_number,vote');
-
-    // Aggregate by proposal
-    const proposalScores = {};
+    const allVotes = await sbRest('triage_votes?round_id=eq.' + currentRound.id + '&select=voter_name,proposal_number,vote');
+    const scores = {};
+    currentProposals.forEach(p => { scores[p.proposal_number] = { pos: 0, neg: 0, total: 0 }; });
     const voterMap = {};
-
-    for (let i = 1; i <= TOTAL; i++) {
-      proposalScores[i] = { pos: 0, neg: 0, total: 0 };
-    }
-
-    allVotes.forEach(v => {
-      if (!proposalScores[v.proposal_number]) return;
-      if (v.vote === 1) proposalScores[v.proposal_number].pos++;
-      if (v.vote === -1) proposalScores[v.proposal_number].neg++;
-      proposalScores[v.proposal_number].total += v.vote;
-
+    (allVotes || []).forEach(v => {
+      if (!scores[v.proposal_number]) return;
+      if (v.vote === 1) scores[v.proposal_number].pos++;
+      if (v.vote === -1) scores[v.proposal_number].neg++;
+      scores[v.proposal_number].total += v.vote;
       if (!voterMap[v.voter_name]) voterMap[v.voter_name] = { pos: 0, neg: 0 };
       if (v.vote === 1) voterMap[v.voter_name].pos++;
       if (v.vote === -1) voterMap[v.voter_name].neg++;
     });
-
     const voterCount = Object.keys(voterMap).length;
-    const voteCount = allVotes.length;
-    summary.innerHTML = `${voterCount} hlasujicich &middot; ${voteCount} hlasů celkem`;
+    const voteCount = (allVotes || []).length;
+    summary.textContent = currentRound.name + ' · ' + voterCount + ' hlasujicich · ' + voteCount + ' hlasů celkem';
 
-    // Sort proposals by score desc, then by positive votes desc
-    const sorted = Object.entries(proposalScores)
+    const sorted = Object.entries(scores)
       .map(([num, s]) => ({ num: parseInt(num), ...s }))
       .sort((a, b) => b.total - a.total || b.pos - a.pos);
+    const maxScore = Math.max.apply(null, sorted.map(s => Math.abs(s.total))) || 1;
 
-    const maxScore = Math.max(...sorted.map(s => Math.abs(s.total)), 1);
+    rankingTab.textContent = '';
+    sorted.forEach((s, i) => {
+      const p = currentProposals.find(x => x.proposal_number === s.num);
+      if (!p) return;
+      const row = document.createElement('div');
+      row.className = 'result-row' + (i === 0 && s.total > 0 ? ' winner' : '');
+      row.innerHTML =
+        '<span class="rank">' + (i + 1) + '.</span>' +
+        '<img class="thumb" src="' + esc(resolveImageUrl(p)) + '" alt="#' + s.num + '">' +
+        '<div class="info">' +
+          '<div class="name">#' + s.num + '</div>' +
+          '<div class="result-bar-wrap"><div class="result-bar ' + (s.total >= 0 ? 'pos-bar' : 'neg-bar') +
+            '" style="width:' + (Math.abs(s.total) / maxScore * 100) + '%"></div></div>' +
+          '<div class="result-detail">+' + s.pos + ' / -' + s.neg + '</div>' +
+        '</div>' +
+        '<span class="score ' + (s.total > 0 ? 'positive' : s.total < 0 ? 'negative' : 'zero') + '">' +
+          (s.total > 0 ? '+' : '') + s.total + '</span>';
+      rankingTab.appendChild(row);
+    });
 
-    rankingTab.innerHTML = sorted.map((s, i) => {
-      const p = proposals[s.num - 1];
-      const isWinner = i === 0 && s.total > 0;
-      const scoreClass = s.total > 0 ? 'positive' : s.total < 0 ? 'negative' : 'zero';
-      const barWidth = Math.abs(s.total) / maxScore * 100;
-      const barClass = s.total >= 0 ? 'pos-bar' : 'neg-bar';
-      return `
-        <div class="result-row ${isWinner ? 'winner' : ''}">
-          <span class="rank">${i + 1}.</span>
-          <img class="thumb" src="${p.src}" alt="#${s.num}">
-          <div class="info">
-            <div class="name">#${s.num}</div>
-            <div class="result-bar-wrap"><div class="result-bar ${barClass}" style="width:${barWidth}%"></div></div>
-            <div class="result-detail">+${s.pos} / -${s.neg}</div>
-          </div>
-          <span class="score ${scoreClass}">${s.total > 0 ? '+' : ''}${s.total}</span>
-        </div>`;
-    }).join('');
-
-    // Voters tab
-    const votersSorted = Object.entries(voterMap)
-      .map(([name, stats]) => ({ name, ...stats }))
-      .sort((a, b) => a.name.localeCompare(b.name));
-
-    votersTab.innerHTML = votersSorted.map(v => `
-      <div class="voter-row">
-        <span class="voter-name">${v.name}${v.name === voterName ? ' (ty)' : ''}</span>
-        <span class="voter-stats">+${v.pos} / -${v.neg}</span>
-      </div>
-    `).join('');
-
+    votersTab.textContent = '';
+    const votersSorted = Object.entries(voterMap).map(([name, st]) => ({ name, ...st })).sort((a, b) => a.name.localeCompare(b.name));
+    votersSorted.forEach(v => {
+      const row = document.createElement('div'); row.className = 'voter-row';
+      const nm = document.createElement('span'); nm.className = 'voter-name';
+      nm.textContent = v.name + (v.name === voterName ? ' (ty)' : '');
+      const st = document.createElement('span'); st.className = 'voter-stats';
+      st.textContent = '+' + v.pos + ' / -' + v.neg;
+      row.appendChild(nm); row.appendChild(st);
+      votersTab.appendChild(row);
+    });
   } catch (e) {
-    console.error('Load results error:', e);
-    rankingTab.innerHTML = '<p style="color:var(--negative);text-align:center;padding:20px">Chyba pri nacitani vysledku</p>';
+    console.error(e);
+    rankingTab.textContent = 'Chyba pri nacitani';
   }
 }
 
-// Also need DELETE policy
-// Handle page reload — check for stored name
-const savedName = sessionStorage.getItem('triage_voter');
-if (savedName) {
-  nameInput.value = savedName;
-  startBtn.disabled = false;
+// ---------- evaluate (grid) ----------
+let evalState = { scores: {}, sorted: [] };
+
+async function openEvaluate() {
+  if (!currentRound) return;
+  showScreen('evaluate');
+  document.getElementById('evalRoundName').textContent = currentRound.name;
+  await loadEvaluate();
 }
 
-// Save name on submit
-const origGoToRules = goToRules;
+document.getElementById('showAllToggle').addEventListener('change', renderEvalGrid);
+document.getElementById('editModeToggle').addEventListener('change', renderEvalGrid);
+
+async function loadEvaluate() {
+  const grid = document.getElementById('evalGrid');
+  grid.textContent = '';
+  const spin = document.createElement('div'); spin.className = 'spinner'; grid.appendChild(spin);
+  document.getElementById('evalSummary').textContent = '';
+  try {
+    currentProposals = await sbRest('triage_proposals?round_id=eq.' + currentRound.id + '&select=*&order=proposal_number.asc');
+    const allVotes = await sbRest('triage_votes?round_id=eq.' + currentRound.id + '&select=voter_name,proposal_number,vote');
+    const scores = {};
+    currentProposals.forEach(p => { scores[p.proposal_number] = { pos: 0, neg: 0, total: 0 }; });
+    const voters = new Set();
+    (allVotes || []).forEach(v => {
+      voters.add(v.voter_name);
+      if (!scores[v.proposal_number]) return;
+      if (v.vote === 1) scores[v.proposal_number].pos++;
+      if (v.vote === -1) scores[v.proposal_number].neg++;
+      scores[v.proposal_number].total += v.vote;
+    });
+    evalState.scores = scores;
+    evalState.sorted = currentProposals
+      .map(p => ({ p, ...scores[p.proposal_number] }))
+      .sort((a, b) => b.total - a.total || b.pos - a.pos || a.p.proposal_number - b.p.proposal_number);
+
+    const voted = evalState.sorted.filter(e => e.pos + e.neg > 0);
+    document.getElementById('evalSummary').textContent =
+      voters.size + ' hlasujicich · ' + (allVotes || []).length + ' hlasů celkem · ' +
+      voted.length + ' / ' + currentProposals.length + ' navrhů ziskalo hlas';
+    renderEvalGrid();
+  } catch (e) {
+    console.error(e);
+    grid.textContent = 'Chyba pri nacitani';
+  }
+}
+
+function renderEvalGrid() {
+  const grid = document.getElementById('evalGrid');
+  const showAll = document.getElementById('showAllToggle').checked;
+  const editMode = document.getElementById('editModeToggle').checked;
+
+  const list = showAll ? evalState.sorted : evalState.sorted.filter(e => e.pos + e.neg > 0);
+
+  grid.textContent = '';
+
+  if (list.length === 0 && !editMode) {
+    const d = document.createElement('div');
+    d.className = 'eval-empty';
+    d.textContent = 'Zatim zadne hlasy. Zapni "Zobrazit i navrhy bez hlasu" nebo nejdriv hlasuj.';
+    grid.appendChild(d);
+    return;
+  }
+
+  let medalRank = 0;
+  list.forEach((e, i) => {
+    const { p, pos, neg, total } = e;
+    const hasVote = (pos + neg) > 0;
+    let medal = null;
+    let cardClass = '';
+    if (hasVote && total > 0) {
+      medalRank++;
+      if (medalRank === 1) { medal = { cls: 'gold', emoji: '🥇', label: 'VITEZ' }; cardClass = 'gold'; }
+      else if (medalRank === 2) { medal = { cls: 'silver', emoji: '🥈', label: '' }; cardClass = 'silver'; }
+      else if (medalRank === 3) { medal = { cls: 'bronze', emoji: '🥉', label: '' }; cardClass = 'bronze'; }
+    }
+
+    const card = document.createElement('div');
+    card.className = 'eval-card' + (cardClass ? ' ' + cardClass : '') + (editMode ? ' editable' : '');
+    card.dataset.proposalId = p.id;
+    card.dataset.proposalNum = p.proposal_number;
+
+    const imgWrap = document.createElement('div'); imgWrap.className = 'eval-img-wrap';
+    const img = document.createElement('img'); img.className = 'eval-img';
+    img.src = resolveImageUrl(p); img.alt = '#' + p.proposal_number; img.loading = 'lazy';
+    imgWrap.appendChild(img);
+
+    const scoreBox = document.createElement('div'); scoreBox.className = 'eval-score-box';
+    const big = document.createElement('span'); big.className = 'big';
+    big.textContent = (total > 0 ? '+' : '') + total;
+    const small = document.createElement('span'); small.className = 'small';
+    small.textContent = '#' + p.proposal_number + ' · ' + pos + '/' + neg;
+    scoreBox.appendChild(big); scoreBox.appendChild(small);
+    imgWrap.appendChild(scoreBox);
+
+    if (medal) {
+      const m = document.createElement('div'); m.className = 'eval-medal ' + medal.cls;
+      m.appendChild(document.createTextNode(medal.emoji));
+      if (medal.label) {
+        const sp = document.createElement('span'); sp.className = 'label'; sp.textContent = medal.label;
+        m.appendChild(sp);
+      }
+      imgWrap.appendChild(m);
+    }
+
+    card.appendChild(imgWrap);
+
+    const footer = document.createElement('div'); footer.className = 'eval-footer';
+    const info = document.createElement('span'); info.className = 'rank-info';
+    const str = document.createElement('strong'); str.textContent = (i + 1) + '.';
+    info.appendChild(str); info.appendChild(document.createTextNode(' z ' + list.length));
+    footer.appendChild(info);
+
+    const delBtn = document.createElement('button'); delBtn.className = 'delete-btn';
+    delBtn.textContent = '🗑 Smazat';
+    delBtn.addEventListener('click', async (evt) => {
+      evt.stopPropagation();
+      if (!confirm('Smazat tento navrh? Smazou se i vsechny jeho hlasy.')) return;
+      try {
+        const num = p.proposal_number;
+        await fetch(SUPABASE_URL + '/rest/v1/triage_votes?round_id=eq.' + currentRound.id + '&proposal_number=eq.' + num, {
+          method: 'DELETE',
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+        });
+        await fetch(SUPABASE_URL + '/rest/v1/triage_proposals?id=eq.' + p.id, {
+          method: 'DELETE',
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+        });
+        if (p.storage_path) {
+          try { await sbStorageDelete(p.storage_path); } catch (err) { console.warn(err); }
+        }
+        await loadEvaluate();
+      } catch (err) {
+        console.error(err);
+        alert('Chyba pri mazani: ' + err.message);
+      }
+    });
+    footer.appendChild(delBtn);
+    card.appendChild(footer);
+    grid.appendChild(card);
+  });
+
+  if (editMode) {
+    const addCard = document.createElement('div');
+    addCard.className = 'eval-add-card visible';
+    addCard.textContent = '+ Pridat obrazky';
+    addCard.addEventListener('click', () => document.getElementById('evalAddInput').click());
+    grid.appendChild(addCard);
+  }
+}
+
+document.getElementById('evalAddInput').addEventListener('change', async (e) => {
+  const files = Array.from(e.target.files || []);
+  e.target.value = '';
+  if (!files.length || !currentRound) return;
+  const sumEl = document.getElementById('evalSummary');
+  const prev = sumEl.textContent;
+  sumEl.textContent = 'Nahravam ' + files.length + ' obrazků...';
+  try {
+    let nextNum = currentProposals.reduce((m, p) => Math.max(m, p.proposal_number), 0) + 1;
+    const rows = [];
+    for (const f of files) {
+      const ext = (f.name.split('.').pop() || 'jpg').toLowerCase();
+      const path = currentRound.slug + '/' + crypto.randomUUID() + '.' + ext;
+      const url = await sbStorageUpload(path, f);
+      rows.push({
+        round_id: currentRound.id,
+        proposal_number: nextNum++,
+        image_url: url,
+        storage_path: path
+      });
+    }
+    if (rows.length) await sbRest('triage_proposals', { method: 'POST', body: rows });
+    await loadEvaluate();
+  } catch (err) {
+    console.error(err);
+    sumEl.textContent = prev;
+    alert('Chyba pri nahravani: ' + err.message);
+  }
+});
+
+// ---------- new round ----------
+function resetNewRound() {
+  stagedFiles = [];
+  document.getElementById('newRoundName').value = '';
+  document.getElementById('newRoundMaxPos').value = '3';
+  document.getElementById('newRoundMaxNeg').value = '3';
+  document.getElementById('uploadStatus').className = 'upload-status';
+  document.getElementById('uploadStatus').textContent = '';
+  renderStaged();
+}
+
+const dropzone = document.getElementById('dropzone');
+const dropInput = document.getElementById('dropInput');
+dropzone.addEventListener('click', () => dropInput.click());
+dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('drag'); });
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag'));
+dropzone.addEventListener('drop', (e) => {
+  e.preventDefault(); dropzone.classList.remove('drag');
+  handleDropped(Array.from(e.dataTransfer.files || []));
+});
+dropInput.addEventListener('change', (e) => {
+  handleDropped(Array.from(e.target.files || []));
+  e.target.value = '';
+});
+
+function handleDropped(files) {
+  const images = files.filter(f => f.type.startsWith('image/'));
+  const remaining = 100 - stagedFiles.length;
+  if (images.length > remaining) alert('Max 100 obrazků. Pridano jen prvnich ' + remaining + '.');
+  images.slice(0, remaining).forEach(f => {
+    stagedFiles.push({ file: f, previewUrl: URL.createObjectURL(f) });
+  });
+  renderStaged();
+}
+
+function renderStaged() {
+  const list = document.getElementById('uploadList');
+  list.textContent = '';
+  stagedFiles.forEach((s, i) => {
+    const item = document.createElement('div'); item.className = 'upload-item';
+    const img = document.createElement('img'); img.src = s.previewUrl; img.alt = '';
+    const badge = document.createElement('span'); badge.className = 'badge'; badge.textContent = '#' + (i + 1);
+    const rm = document.createElement('button'); rm.className = 'remove'; rm.title = 'Odstranit'; rm.textContent = '×';
+    rm.addEventListener('click', () => {
+      URL.revokeObjectURL(stagedFiles[i].previewUrl);
+      stagedFiles.splice(i, 1);
+      renderStaged();
+    });
+    item.appendChild(img); item.appendChild(badge); item.appendChild(rm);
+    list.appendChild(item);
+  });
+  const btn = document.getElementById('createRoundBtn');
+  btn.disabled = stagedFiles.length < 2;
+  btn.textContent = stagedFiles.length < 2
+    ? 'Nahraj aspon 2 obrazky (' + stagedFiles.length + ')'
+    : 'Vytvorit hlasovani s ' + stagedFiles.length + ' obrazky';
+}
+
+document.getElementById('createRoundBtn').addEventListener('click', async () => {
+  const name = document.getElementById('newRoundName').value.trim();
+  const maxPos = parseInt(document.getElementById('newRoundMaxPos').value) || 3;
+  const maxNeg = parseInt(document.getElementById('newRoundMaxNeg').value) || 3;
+  if (!name) { alert('Zadej nazev kola.'); return; }
+  if (stagedFiles.length < 2) { alert('Nahraj aspon 2 obrazky.'); return; }
+
+  const btn = document.getElementById('createRoundBtn');
+  const status = document.getElementById('uploadStatus');
+  btn.disabled = true;
+  status.className = 'upload-status visible';
+  status.textContent = 'Zakladam kolo...';
+
+  let roundId = null;
+  const slugBase = slugify(name);
+  const uploadedPaths = [];
+
+  try {
+    let slug = slugBase; let suffix = 1;
+    while (rounds.some(r => r.slug === slug)) slug = slugBase + '-' + (++suffix);
+
+    const res = await sbRest('triage_rounds', {
+      method: 'POST',
+      body: [{ slug, name, max_pos: maxPos, max_neg: maxNeg }]
+    });
+    const round = res[0];
+    roundId = round.id;
+
+    const rows = [];
+    for (let i = 0; i < stagedFiles.length; i++) {
+      status.textContent = 'Nahravam obrazek ' + (i + 1) + ' / ' + stagedFiles.length + '...';
+      const s = stagedFiles[i];
+      const ext = (s.file.name.split('.').pop() || 'jpg').toLowerCase();
+      const path = slug + '/' + crypto.randomUUID() + '.' + ext;
+      const url = await sbStorageUpload(path, s.file);
+      uploadedPaths.push(path);
+      rows.push({
+        round_id: roundId,
+        proposal_number: i + 1,
+        image_url: url,
+        storage_path: path
+      });
+    }
+    status.textContent = 'Ukladam navrhy...';
+    await sbRest('triage_proposals', { method: 'POST', body: rows });
+
+    status.textContent = '✓ Hotovo!';
+    rounds = await sbRest('triage_rounds?select=*&order=created_at.desc');
+    renderRoundSelect();
+    await pickRound(roundId);
+    stagedFiles.forEach(s => URL.revokeObjectURL(s.previewUrl));
+    stagedFiles = [];
+    setTimeout(() => { showScreen('home'); renderStaged(); }, 700);
+  } catch (err) {
+    console.error(err);
+    status.className = 'upload-status visible error';
+    status.textContent = 'Chyba: ' + err.message;
+    btn.disabled = false;
+    if (roundId) {
+      try {
+        await fetch(SUPABASE_URL + '/rest/v1/triage_rounds?id=eq.' + roundId, {
+          method: 'DELETE',
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+        });
+      } catch {}
+    }
+    for (const p of uploadedPaths) {
+      try { await sbStorageDelete(p); } catch {}
+    }
+  }
+});
+
+boot();
 </script>
 </body>
 </html>
