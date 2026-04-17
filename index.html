@@ -922,6 +922,9 @@ document.getElementById('lockRoundBtn').addEventListener('click', async () => {
       body: { locked: next },
       headers: { 'Prefer': 'return=representation' }
     });
+    if (!Array.isArray(res) || res.length === 0) {
+      throw new Error('Nic se neulozilo (RLS policy?)');
+    }
     currentRound.locked = next;
     const idx = rounds.findIndex(r => r.id === currentRound.id);
     if (idx >= 0) rounds[idx] = Object.assign({}, rounds[idx], { locked: next });
@@ -929,7 +932,7 @@ document.getElementById('lockRoundBtn').addEventListener('click', async () => {
     toast(next ? '🔒 Kolo zamceno' : '🔓 Kolo odemceno');
   } catch (err) {
     console.error(err);
-    toast('Chyba: ' + err.message, { error: true });
+    toast('Chyba: ' + err.message, { error: true, duration: 4000 });
     btn.disabled = false;
   }
 });
