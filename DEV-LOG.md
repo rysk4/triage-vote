@@ -108,3 +108,42 @@ Jednoduchá hlasovaci webappka pro vyber navrhů. Uzivatele prochazeji obrazky a
 ### Files
 - Migrace: `triage_vote_lock_rounds`
 - JS: startVoting refactor do 2 kroku (nameScreen → submitNameAndStart)
+
+## 2026-04-17 (pozdeji III) — Polish: locked routing, RLS fix, diakritika
+
+### Locked public → rovnou evaluate (commit cc904b3)
+- Zamcene kolo otevrene pres `/slug` preskoci publicHome a pristane rovnou na evaluate gridu
+- Banner `🔒 Hlasovani bylo uzavreno — Toto je finalni vyhodnoceni` nahore
+- Back button skryty (neni kam), edit-mode toggle skryty v public mode
+
+### RLS UPDATE policy pro rounds (fix 95245bc)
+- Pri prvnim pokusu zamknout kolo PATCH tise selhal (HTTP 200, ale 0 rows affected)
+- Priciny: chybela `UPDATE` policy na `triage_rounds` (mel jsem jen SELECT/INSERT/DELETE)
+- Migrace: `triage_rounds_update_policy` pridala `CREATE POLICY "rounds update" FOR UPDATE USING (true) WITH CHECK (true)`
+- Klient ted detekuje prazdnou odpoved (`res.length === 0`) a vyhodi chybu → tise nenapadne PATCH uz neproleze
+
+### Diakritika sweep (commit b4c56b3)
+- Python skript (batch replace) ~95 oprav napric celou appkou
+- Home, public home, rules, voting, results, evaluate, new-round, login, name, toasts
+- Poznamka do pristich sezeni: psat CZ text s diakritikou od zacatku (feedback memory)
+
+## 2026-04-17 (pozdeji IV) — Migrace na Vercel + clean path URLs
+
+### Hosting migrace GH Pages → Vercel
+- Projekt nasazen jako `triage_vote` v Vercel org `sixwave` (fra1 region)
+- Custom domena: **https://triage.sixwave.net**
+- Wildcard DNS `*.sixwave.net CNAME cname.vercel-dns.com` (DNS-only, Cloudflare) → stacil `vercel domains add`
+- `vercel.json` s `regions: ["fra1"]` (konvence sixwave projektu)
+- GitHub Pages stale bezi paralelne na `rysk4.github.io/triage-vote` (backup, sdili Supabase)
+
+### Clean path URLs (commit a29e7fa)
+- `vercel.json` rewrite `/:slug([a-z0-9][a-z0-9-]*)` → `/index.html` (SPA fallback)
+- JS: `detectSlug()` cte nejdriv `location.pathname`, fallback na `location.hash`
+- `shareLinkFor()` generuje `https://triage.sixwave.net/slug` (bez `#`)
+- Stare hash-linky (`/#slug`) dal funguji — zpetna kompatibilita
+- `popstate` listener → reload pri browser back/forward (mode se muze zmenit)
+
+### Aktualni URL struktura
+- `/` — admin (heslo `napajedla-triage-2026`)
+- `/<slug>` — public single-round (Hlasovat / Vyhodnotit, nebo rovnou Vyhodnotit pokud locked)
+- `/#<slug>` — legacy, stale funguje
