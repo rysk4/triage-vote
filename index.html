@@ -568,10 +568,15 @@
 
 <!-- EVALUATE -->
 <div id="evaluate" class="screen">
-  <div class="page-header">
-    <button class="back-btn" data-back="home">← Zpet</button>
+  <div class="page-header" id="evalHeader">
+    <button class="back-btn" data-back="home" id="evalBackBtn">← Zpet</button>
     <div class="page-title" id="evalRoundName">Vyhodnoceni</div>
     <div class="page-spacer"></div>
+  </div>
+  <div class="lock-banner" id="evalLockBanner" style="display:none; margin-bottom: 16px;">
+    <div class="emoji">🔒</div>
+    <div class="title">Hlasovani bylo uzavreno</div>
+    <div class="hint">Toto je finalni vyhodnoceni. Nove hlasy uz nelze odeslat.</div>
   </div>
   <div class="evaluate-summary" id="evalSummary"></div>
   <div class="evaluate-controls">
@@ -814,6 +819,11 @@ async function bootPublic(slug) {
     document.getElementById('publicLockHint').textContent = currentProposals.length
       ? 'Nove hlasy uz nelze odeslat. Vysledky najdes v sekci Vyhodnotit.'
       : 'Hlasovani bylo zamceno — zadne navrhy.';
+
+    // Locked + public → skip home, go straight to evaluation
+    if (locked) {
+      await openEvaluate();
+    }
   } catch (e) {
     console.error(e);
     document.getElementById('publicRoundSubtitle').textContent = 'Chyba pri nacitani: ' + e.message;
@@ -1286,6 +1296,21 @@ async function openEvaluate() {
   if (!currentRound) return;
   showScreen('evaluate');
   document.getElementById('evalRoundName').textContent = currentRound.name;
+
+  const locked = !!currentRound.locked;
+  document.getElementById('evalLockBanner').style.display = locked ? 'flex' : 'none';
+
+  // In public mode with a locked round, the evaluate screen IS the landing —
+  // hide the back button because there's nothing to go back to.
+  const hideBack = (mode === 'public' && locked);
+  const backBtn = document.getElementById('evalBackBtn');
+  backBtn.style.visibility = hideBack ? 'hidden' : '';
+
+  // Hide edit mode toggle in public mode (admin-only)
+  const editToggleLabel = document.getElementById('editModeToggle').closest('.toggle');
+  if (editToggleLabel) editToggleLabel.style.display = (mode === 'public') ? 'none' : '';
+  if (mode === 'public') document.getElementById('editModeToggle').checked = false;
+
   await loadEvaluate();
 }
 
