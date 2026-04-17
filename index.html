@@ -428,25 +428,25 @@
 <!-- LOGIN (admin gate) -->
 <div id="login" class="screen">
   <h1>🔒 Admin</h1>
-  <p class="sub">Zadej heslo pro pristup do spravce hlasovani.</p>
+  <p class="sub">Zadej heslo pro přístup do správce hlasování.</p>
   <div class="login-box">
     <input type="password" class="name-input" id="loginInput" placeholder="Heslo" autocomplete="current-password">
-    <button class="btn btn-primary" id="loginBtn">Prihlasit</button>
+    <button class="btn btn-primary" id="loginBtn">Přihlásit</button>
     <div class="login-err" id="loginErr"></div>
   </div>
-  <p class="sub" style="font-size:12px">Verejna kola maji vlastni odkaz — ten heslo nevyzaduje.</p>
+  <p class="sub" style="font-size:12px">Veřejná kola mají vlastní odkaz — ten heslo nevyžaduje.</p>
 </div>
 
 <!-- PUBLIC HOME (shown when URL has #slug) -->
 <div id="publicHome" class="screen">
-  <h1 id="publicRoundTitle">Hlasovani</h1>
-  <p class="subtitle" id="publicRoundSubtitle">Nacitam...</p>
+  <h1 id="publicRoundTitle">Hlasování</h1>
+  <p class="subtitle" id="publicRoundSubtitle">Načítám...</p>
   <div class="meta-line" id="publicRoundMeta"></div>
 
   <div class="lock-banner" id="publicLockBanner" style="display:none">
     <div class="emoji">🔒</div>
-    <div class="title">Hlasovani bylo uzavreno</div>
-    <div class="hint" id="publicLockHint">Nove hlasy uz nelze odeslat. Vysledky najdes v sekci Vyhodnotit.</div>
+    <div class="title">Hlasování bylo uzavřeno</div>
+    <div class="hint" id="publicLockHint">Nové hlasy už nelze odeslat. Výsledky najdes v sekci Vyhodnotit.</div>
   </div>
 
   <div class="home-actions">
@@ -458,31 +458,31 @@
 <!-- NAME SCREEN (replaces prompt()) -->
 <div id="nameScreen" class="screen">
   <div class="page-header">
-    <button class="back-btn" data-back="home">← Zpet</button>
-    <div class="page-title">Tvoje jmeno</div>
+    <button class="back-btn" data-back="home">← Zpět</button>
+    <div class="page-title">Tvoje jméno</div>
     <div class="page-spacer"></div>
   </div>
-  <h2>Jak se jmenujes?</h2>
-  <p class="sub">Hlasujes v kole <span class="round-name" id="nameRoundName"></span>.<br>Jmeno pouzijeme k ulozeni tvych hlasů — muzes se k nim vratit a upravit je.</p>
-  <input type="text" class="name-input" id="nameInput" placeholder="Napr. Matyas" maxlength="30" autocomplete="name">
-  <button class="btn btn-primary" id="nameSubmitBtn" disabled style="min-width:220px">Pokracovat</button>
+  <h2>Jak se jmenuješ?</h2>
+  <p class="sub">Hlasuješ v kole <span class="round-name" id="nameRoundName"></span>.<br>Jméno použijeme k uložení tvých hlasů — můžeš se k nim vrátit a upravit je.</p>
+  <input type="text" class="name-input" id="nameInput" placeholder="Např. Matyáš" maxlength="30" autocomplete="name">
+  <button class="btn btn-primary" id="nameSubmitBtn" disabled style="min-width:220px">Pokračovat</button>
 </div>
 
 <!-- HOME (admin) -->
 <div id="home" class="screen">
   <h1>Triage Vote</h1>
-  <p class="subtitle">Hlasovaci system pro vyber navrhů. Vyber kolo a zacni hlasovat — nebo zaloz nove.</p>
+  <p class="subtitle">Hlasovací systém pro výběr návrhů. Vyber kolo a začni hlasovat — nebo založ nové.</p>
 
   <div class="round-picker">
-    <label>Kolo hlasovani</label>
+    <label>Kolo hlasování</label>
     <select id="roundSelect" class="round-select"></select>
     <div class="round-meta" id="roundMeta"></div>
   </div>
 
   <div class="lock-banner" id="homeLockBanner" style="display:none">
     <div class="emoji">🔒</div>
-    <div class="title">Hlasovani je uzavreno</div>
-    <div class="hint">Nove hlasy uz nelze odeslat. Odemkni kolo tlacitkem nize pro znovu otevreni.</div>
+    <div class="title">Hlasování je uzavřeno</div>
+    <div class="hint">Nové hlasy už nelze odeslat. Odemkni kolo tlačítkem níže pro znovuotevření.</div>
   </div>
 
   <div class="home-actions">
@@ -490,35 +490,35 @@
     <button class="btn btn-secondary" id="homeEvalBtn">Vyhodnotit</button>
   </div>
   <div class="round-actions-row">
-    <button class="round-action-btn" id="shareRoundBtn">🔗 Zkopirovat odkaz</button>
+    <button class="round-action-btn" id="shareRoundBtn">🔗 Zkopírovat odkaz</button>
     <button class="round-action-btn" id="lockRoundBtn">🔒 Zamknout</button>
     <button class="round-action-btn danger" id="deleteRoundBtn">🗑 Smazat kolo</button>
   </div>
   <div class="home-secondary">
-    <button class="btn btn-ghost" id="homeNewRoundBtn">+ Nove hlasovani</button>
+    <button class="btn btn-ghost" id="homeNewRoundBtn">+ Nové hlasování</button>
   </div>
 </div>
 
 <!-- RULES -->
 <div id="rules" class="screen">
   <div class="page-header">
-    <button class="back-btn" data-back="home">← Zpet</button>
+    <button class="back-btn" data-back="home">← Zpět</button>
     <div class="page-title">Pravidla</div>
     <div class="page-spacer"></div>
   </div>
   <div style="text-align:center; display:flex; flex-direction:column; gap:24px; align-items:center;">
-    <h2 id="rulesHeading">Pravidla hlasovani</h2>
-    <p>Vitej, <span class="welcome-name" id="welcomeName"></span></p>
+    <h2 id="rulesHeading">Pravidla hlasování</h2>
+    <p>Vítej, <span class="welcome-name" id="welcomeName"></span></p>
     <ul class="rules-list" id="rulesList"></ul>
-    <button class="btn btn-primary" id="rulesBtn">Zacit hlasovat</button>
+    <button class="btn btn-primary" id="rulesBtn">Začít hlasovat</button>
   </div>
 </div>
 
 <!-- VOTING -->
 <div id="voting" class="screen">
   <div class="page-header">
-    <button class="back-btn" data-back="home">← Zpet</button>
-    <div class="page-title" id="votingRoundName">Hlasovani</div>
+    <button class="back-btn" data-back="home">← Zpět</button>
+    <div class="page-title" id="votingRoundName">Hlasování</div>
     <div class="page-spacer"></div>
   </div>
   <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
@@ -539,28 +539,28 @@
   </div>
 
   <div class="vote-actions">
-    <button class="vote-btn like" id="likeBtn">👍 Libi se mi</button>
-    <button class="vote-btn dislike" id="dislikeBtn">👎 Nelibi</button>
+    <button class="vote-btn like" id="likeBtn">👍 Líbí se mi</button>
+    <button class="vote-btn dislike" id="dislikeBtn">👎 Nelíbí</button>
   </div>
 
   <div class="nav-actions">
-    <button class="nav-btn" id="prevBtn" disabled>← Zpet</button>
-    <button class="nav-btn" id="nextBtn">Dalsi →</button>
+    <button class="nav-btn" id="prevBtn" disabled>← Zpět</button>
+    <button class="nav-btn" id="nextBtn">Další →</button>
   </div>
-  <p class="swipe-hint">Projdi vsechny navrhy a pak odesli hlasy</p>
+  <p class="swipe-hint">Projdi všechny návrhy a pak odešli hlasy</p>
 </div>
 
 <!-- RESULTS -->
 <div id="results" class="screen">
   <div class="page-header">
-    <button class="back-btn" data-back="home">← Zpet</button>
-    <div class="page-title">Vysledky</div>
+    <button class="back-btn" data-back="home">← Zpět</button>
+    <div class="page-title">Výsledky</div>
     <div class="page-spacer"></div>
   </div>
   <div class="results-summary" id="resultsSummary"></div>
   <div class="tab-bar">
-    <button class="tab-btn active" data-tab="ranking">Poradi navrhů</button>
-    <button class="tab-btn" data-tab="voters">Hlasujici</button>
+    <button class="tab-btn active" data-tab="ranking">Pořadí návrhů</button>
+    <button class="tab-btn" data-tab="voters">Hlasující</button>
   </div>
   <div id="rankingTab" class="results-grid-list"></div>
   <div id="votersTab" class="voters-list" style="display:none"></div>
@@ -569,24 +569,24 @@
 <!-- EVALUATE -->
 <div id="evaluate" class="screen">
   <div class="page-header" id="evalHeader">
-    <button class="back-btn" data-back="home" id="evalBackBtn">← Zpet</button>
-    <div class="page-title" id="evalRoundName">Vyhodnoceni</div>
+    <button class="back-btn" data-back="home" id="evalBackBtn">← Zpět</button>
+    <div class="page-title" id="evalRoundName">Vyhodnocení</div>
     <div class="page-spacer"></div>
   </div>
   <div class="lock-banner" id="evalLockBanner" style="display:none; margin-bottom: 16px;">
     <div class="emoji">🔒</div>
-    <div class="title">Hlasovani bylo uzavreno</div>
-    <div class="hint">Toto je finalni vyhodnoceni. Nove hlasy uz nelze odeslat.</div>
+    <div class="title">Hlasování bylo uzavřeno</div>
+    <div class="hint">Toto je finální vyhodnocení. Nové hlasy už nelze odeslat.</div>
   </div>
   <div class="evaluate-summary" id="evalSummary"></div>
   <div class="evaluate-controls">
     <label class="toggle">
       <input type="checkbox" id="showAllToggle">
-      <span>Zobrazit i navrhy bez hlasu</span>
+      <span>Zobrazit i návrhy bez hlasů</span>
     </label>
     <label class="toggle">
       <input type="checkbox" id="editModeToggle">
-      <span>✏️ Upravovat (pridat / smazat)</span>
+      <span>✏️ Upravovat (přidat / smazat)</span>
     </label>
   </div>
   <div class="evaluate-grid" id="evalGrid"></div>
@@ -596,33 +596,33 @@
 <!-- NEW ROUND -->
 <div id="newround" class="screen">
   <div class="page-header">
-    <button class="back-btn" data-back="home">← Zpet</button>
-    <div class="page-title">Nove hlasovani</div>
+    <button class="back-btn" data-back="home">← Zpět</button>
+    <div class="page-title">Nové hlasování</div>
     <div class="page-spacer"></div>
   </div>
 
   <div class="field">
-    <label>Nazev kola</label>
-    <input type="text" class="input" id="newRoundName" placeholder="Napr. Merch Munchen — 02" maxlength="80">
+    <label>Název kola</label>
+    <input type="text" class="input" id="newRoundName" placeholder="Např. Merch München — 02" maxlength="80">
   </div>
 
   <div class="field" style="flex-direction: row; gap: 12px;">
     <div style="flex:1;">
-      <label>Max kladnych hlasů / uzivatel</label>
+      <label>Max kladných hlasů / uživatel</label>
       <input type="number" class="input" id="newRoundMaxPos" value="3" min="1" max="99">
     </div>
     <div style="flex:1;">
-      <label>Max zapornych hlasů / uzivatel</label>
+      <label>Max záporných hlasů / uživatel</label>
       <input type="number" class="input" id="newRoundMaxNeg" value="3" min="0" max="99">
     </div>
   </div>
 
   <div class="field">
-    <label>Obrazky (2 az 100)</label>
+    <label>Obrázky (2 až 100)</label>
     <div class="dropzone" id="dropzone">
       <div class="dz-icon">📂</div>
-      <div class="dz-text">Pretahni sem obrazky nebo klikni</div>
-      <div class="dz-hint">JPG / PNG / WebP / GIF &middot; max 10 MB za obrazek</div>
+      <div class="dz-text">Přetáhni sem obrázky nebo klikni</div>
+      <div class="dz-hint">JPG / PNG / WebP / GIF &middot; max 10 MB za obrázek</div>
     </div>
     <input type="file" id="dropInput" accept="image/*" multiple style="display:none">
   </div>
@@ -630,7 +630,7 @@
   <div class="upload-list" id="uploadList"></div>
   <div class="upload-status" id="uploadStatus"></div>
 
-  <button class="btn btn-primary" id="createRoundBtn" style="width:100%; margin-top: 8px;" disabled>Vytvorit hlasovani</button>
+  <button class="btn btn-primary" id="createRoundBtn" style="width:100%; margin-top: 8px;" disabled>Vytvořit hlasování</button>
 </div>
 
 <script>
@@ -669,7 +669,7 @@ function setModeBadge() {
     b.className = 'mode-badge admin';
     const logout = document.createElement('span');
     logout.className = 'logout-btn';
-    logout.textContent = 'odhlasit';
+    logout.textContent = 'odhlásit';
     logout.addEventListener('click', () => {
       sessionStorage.removeItem(ADMIN_SESSION_KEY);
       location.reload();
@@ -788,12 +788,12 @@ async function bootPublic(slug) {
   // Redirect "back" buttons to publicHome so voters don't land on admin page
   document.querySelectorAll('[data-back="home"]').forEach(b => { b.dataset.back = 'publicHome'; });
   showScreen('publicHome');
-  document.getElementById('publicRoundSubtitle').textContent = 'Nacitam...';
+  document.getElementById('publicRoundSubtitle').textContent = 'Načítám...';
   try {
     const res = await sbRest('triage_rounds?slug=eq.' + encodeURIComponent(slug) + '&select=*');
     if (!res || res.length === 0) {
       document.getElementById('publicRoundTitle').textContent = 'Kolo nenalezeno';
-      document.getElementById('publicRoundSubtitle').textContent = 'Tento odkaz zrejme neexistuje nebo bylo kolo smazano.';
+      document.getElementById('publicRoundSubtitle').textContent = 'Tento odkaz zřejmě neexistuje nebo bylo kolo smazáno.';
       document.getElementById('publicRoundMeta').style.display = 'none';
       document.querySelector('#publicHome .home-actions').style.display = 'none';
       return;
@@ -803,12 +803,12 @@ async function bootPublic(slug) {
     currentProposals = await sbRest('triage_proposals?round_id=eq.' + currentRound.id + '&select=*&order=proposal_number.asc');
     document.getElementById('publicRoundTitle').textContent = currentRound.name;
     document.getElementById('publicRoundSubtitle').textContent = currentRound.locked
-      ? 'Toto hlasovani je uzavrene.'
-      : 'Hlasovaci kolo — vyber svych favoritů a odeslat.';
+      ? 'Toto hlasování je uzavřené.'
+      : 'Hlasovací kolo — vyber své favority a odešli.';
     const meta = document.getElementById('publicRoundMeta');
     meta.textContent = '';
     const s1 = document.createElement('span');
-    s1.innerHTML = '<strong>' + currentProposals.length + '</strong> navrhů';
+    s1.innerHTML = '<strong>' + currentProposals.length + '</strong> návrhů';
     const s2 = document.createElement('span');
     s2.innerHTML = '<strong>+' + currentRound.max_pos + '</strong> / <strong>−' + currentRound.max_neg + '</strong> hlasů';
     meta.appendChild(s1); meta.appendChild(s2);
@@ -817,8 +817,8 @@ async function bootPublic(slug) {
     document.getElementById('publicVoteBtn').disabled = !canVote;
     document.getElementById('publicLockBanner').style.display = locked ? 'flex' : 'none';
     document.getElementById('publicLockHint').textContent = currentProposals.length
-      ? 'Nove hlasy uz nelze odeslat. Vysledky najdes v sekci Vyhodnotit.'
-      : 'Hlasovani bylo zamceno — zadne navrhy.';
+      ? 'Nové hlasy už nelze odeslat. Výsledky najdes v sekci Vyhodnotit.'
+      : 'Hlasování bylo zamčeno — žádné návrhy.';
 
     // Locked + public → skip home, go straight to evaluation
     if (locked) {
@@ -826,7 +826,7 @@ async function bootPublic(slug) {
     }
   } catch (e) {
     console.error(e);
-    document.getElementById('publicRoundSubtitle').textContent = 'Chyba pri nacitani: ' + e.message;
+    document.getElementById('publicRoundSubtitle').textContent = 'Chyba při načítání: ' + e.message;
   }
 }
 
@@ -844,14 +844,14 @@ async function loadAdminHome() {
   const roundSelect = document.getElementById('roundSelect');
   roundSelect.textContent = '';
   const opt = document.createElement('option');
-  opt.textContent = 'Nacitam...';
+  opt.textContent = 'Načítám...';
   roundSelect.appendChild(opt);
   try {
     rounds = await sbRest('triage_rounds?select=*&order=created_at.desc');
     if (!rounds || rounds.length === 0) {
       roundSelect.textContent = '';
       const o = document.createElement('option');
-      o.textContent = 'Zadne kolo zatim';
+      o.textContent = 'Žádné kolo zatím';
       roundSelect.appendChild(o);
       document.getElementById('homeVoteBtn').disabled = true;
       document.getElementById('homeEvalBtn').disabled = true;
@@ -866,7 +866,7 @@ async function loadAdminHome() {
     console.error('Boot:', e);
     roundSelect.textContent = '';
     const o = document.createElement('option');
-    o.textContent = 'Chyba pri nacitani';
+    o.textContent = 'Chyba při načítání';
     roundSelect.appendChild(o);
   }
 }
@@ -885,7 +885,7 @@ async function tryLogin() {
     await bootAdmin();
     setModeBadge();
   } else {
-    err.textContent = 'Nespravne heslo';
+    err.textContent = 'Nesprávné heslo';
     input.select();
   }
 }
@@ -905,9 +905,9 @@ document.getElementById('shareRoundBtn').addEventListener('click', async () => {
   const link = shareLinkFor(currentRound);
   try {
     await navigator.clipboard.writeText(link);
-    toast('Odkaz zkopirovan: ' + link, { duration: 3500 });
+    toast('Odkaz zkopírován: ' + link, { duration: 3500 });
   } catch {
-    prompt('Zkopiruj odkaz:', link);
+    prompt('Zkopíruj odkaz:', link);
   }
 });
 
@@ -923,13 +923,13 @@ document.getElementById('lockRoundBtn').addEventListener('click', async () => {
       headers: { 'Prefer': 'return=representation' }
     });
     if (!Array.isArray(res) || res.length === 0) {
-      throw new Error('Nic se neulozilo (RLS policy?)');
+      throw new Error('Nic se neuložilo (chybí RLS policy?)');
     }
     currentRound.locked = next;
     const idx = rounds.findIndex(r => r.id === currentRound.id);
     if (idx >= 0) rounds[idx] = Object.assign({}, rounds[idx], { locked: next });
     await pickRound(currentRound.id);
-    toast(next ? '🔒 Kolo zamceno' : '🔓 Kolo odemceno');
+    toast(next ? '🔒 Kolo zamčeno' : '🔓 Kolo odemčeno');
   } catch (err) {
     console.error(err);
     toast('Chyba: ' + err.message, { error: true, duration: 4000 });
@@ -957,9 +957,9 @@ document.getElementById('deleteRoundBtn').addEventListener('click', async () => 
     } catch { return 0; }
   })();
   const msg = 'Opravdu smazat kolo "' + r.name + '"?\n\n' +
-    '• ' + currentProposals.length + ' navrhů\n' +
+    '• ' + currentProposals.length + ' návrhů\n' +
     '• ' + votesCount + ' hlasů\n\n' +
-    'Tato akce je NEVRATNA. Smazou se i vsechny uploadovane obrazky.';
+    'Tato akce je NEVRATNÁ. Smažou se i všechny nahrané obrázky.';
   if (!confirm(msg)) return;
 
   try {
@@ -976,7 +976,7 @@ document.getElementById('deleteRoundBtn').addEventListener('click', async () => 
     // Cleanup storage (best-effort, parallel)
     await Promise.allSettled(paths.map(p => sbStorageDelete(p)));
 
-    toast('Kolo smazano.');
+    toast('Kolo smazáno.');
     await loadAdminHome();
   } catch (err) {
     console.error(err);
@@ -1006,8 +1006,8 @@ async function pickRound(id) {
     currentProposals = [];
   }
   const locked = !!currentRound.locked;
-  const metaText = currentProposals.length + ' navrhů · +' + currentRound.max_pos + ' / −' + currentRound.max_neg + ' hlasů';
-  document.getElementById('roundMeta').textContent = metaText + (locked ? ' · 🔒 uzavreno' : '');
+  const metaText = currentProposals.length + ' návrhů · +' + currentRound.max_pos + ' / −' + currentRound.max_neg + ' hlasů';
+  document.getElementById('roundMeta').textContent = metaText + (locked ? ' · 🔒 uzavřeno' : '');
 
   const canVote = currentProposals.length > 0 && !locked;
   document.getElementById('homeVoteBtn').disabled = !canVote;
@@ -1035,7 +1035,7 @@ document.getElementById('homeNewRoundBtn').addEventListener('click', () => {
 function startVoting() {
   if (!currentRound) return;
   if (currentRound.locked) {
-    toast('🔒 Hlasovani bylo uzavreno.', { duration: 2800 });
+    toast('🔒 Hlasování bylo uzavřeno.', { duration: 2800 });
     return;
   }
   const saved = sessionStorage.getItem('triage_voter') || '';
@@ -1078,9 +1078,9 @@ async function submitNameAndStart() {
   const rulesList = document.getElementById('rulesList');
   rulesList.textContent = '';
   const rulesData = [
-    ['🖼', 'Projdes ', currentProposals.length + ' navrhů', ' v kole '],
-    ['👍', 'Mas ', currentRound.max_pos + ' pozitivnich hlasů', ' — pro navrhy, ktere se ti libi'],
-    ['👎', 'Mas ', currentRound.max_neg + ' negativnich hlasů', ' — pro navrhy, ktere se ti nelibi']
+    ['🖼', 'Projdeš ', currentProposals.length + ' návrhů', ' v kole '],
+    ['👍', 'Máš ', currentRound.max_pos + ' pozitivních hlasů', ' — pro návrhy, které se ti líbí'],
+    ['👎', 'Máš ', currentRound.max_neg + ' negativních hlasů', ' — pro návrhy, které se ti nelíbí']
   ];
   rulesData.forEach(([ico, a, strong, b]) => {
     const li = document.createElement('li');
@@ -1097,9 +1097,9 @@ async function submitNameAndStart() {
     li.appendChild(sIcon); li.appendChild(sBody);
     rulesList.appendChild(li);
   });
-  ['⏭ Ostatni navrhy muzes preskocit',
-   '🔄 Hlasy muzes menit dokud nedas Odeslat',
-   '📊 Na konci uvidis celkove vysledky'].forEach(t => {
+  ['⏭ Ostatní návrhy můžeš přeskočit',
+   '🔄 Hlasy můžeš měnit dokud nedáš Odeslat',
+   '📊 Na konci uvidíš celkové výsledky'].forEach(t => {
     const li = document.createElement('li');
     const sIcon = document.createElement('span'); sIcon.className = 'icon'; sIcon.textContent = t.slice(0, 2).trim();
     const sBody = document.createElement('span'); sBody.textContent = t.slice(2).trim();
@@ -1137,7 +1137,7 @@ function renderProposal() {
   if (!p) return;
   const total = currentProposals.length;
   proposalImg.src = resolveImageUrl(p);
-  proposalImg.alt = 'Navrh #' + p.proposal_number;
+  proposalImg.alt = 'Návrh #' + p.proposal_number;
   proposalNum.textContent = '#' + p.proposal_number;
   const fileName = (p.image_url || '').split('/').pop() || '';
   proposalFile.textContent = fileName;
@@ -1161,7 +1161,7 @@ function renderProposal() {
     nextBtn.textContent = 'Odeslat hlasy ✓';
     nextBtn.classList.add('finish');
   } else {
-    nextBtn.textContent = 'Dalsi →';
+    nextBtn.textContent = 'Další →';
     nextBtn.classList.remove('finish');
   }
 }
@@ -1192,7 +1192,7 @@ document.addEventListener('keydown', (e) => {
 
 async function submitVotes() {
   nextBtn.disabled = true;
-  nextBtn.textContent = 'Odesilam...';
+  nextBtn.textContent = 'Odesílám...';
   try {
     const voteRows = Object.entries(votes).map(([num, vote]) => ({
       voter_name: voterName,
@@ -1248,7 +1248,7 @@ async function loadResults() {
     });
     const voterCount = Object.keys(voterMap).length;
     const voteCount = (allVotes || []).length;
-    summary.textContent = currentRound.name + ' · ' + voterCount + ' hlasujicich · ' + voteCount + ' hlasů celkem';
+    summary.textContent = currentRound.name + ' · ' + voterCount + ' hlasujících · ' + voteCount + ' hlasů celkem';
 
     const sorted = Object.entries(scores)
       .map(([num, s]) => ({ num: parseInt(num), ...s }))
@@ -1288,7 +1288,7 @@ async function loadResults() {
     });
   } catch (e) {
     console.error(e);
-    rankingTab.textContent = 'Chyba pri nacitani';
+    rankingTab.textContent = 'Chyba při načítání';
   }
 }
 
@@ -1345,12 +1345,12 @@ async function loadEvaluate() {
 
     const voted = evalState.sorted.filter(e => e.pos + e.neg > 0);
     document.getElementById('evalSummary').textContent =
-      voters.size + ' hlasujicich · ' + (allVotes || []).length + ' hlasů celkem · ' +
-      voted.length + ' / ' + currentProposals.length + ' navrhů ziskalo hlas';
+      voters.size + ' hlasujících · ' + (allVotes || []).length + ' hlasů celkem · ' +
+      voted.length + ' / ' + currentProposals.length + ' návrhů ziskalo hlas';
     renderEvalGrid();
   } catch (e) {
     console.error(e);
-    grid.textContent = 'Chyba pri nacitani';
+    grid.textContent = 'Chyba při načítání';
   }
 }
 
@@ -1366,7 +1366,7 @@ function renderEvalGrid() {
   if (list.length === 0 && !editMode) {
     const d = document.createElement('div');
     d.className = 'eval-empty';
-    d.textContent = 'Zatim zadne hlasy. Zapni "Zobrazit i navrhy bez hlasu" nebo nejdriv hlasuj.';
+    d.textContent = 'Zatím žádné hlasy. Zapni "Zobrazit i návrhy bez hlasů" nebo nejdřív hlasuj.';
     grid.appendChild(d);
     return;
   }
@@ -1379,7 +1379,7 @@ function renderEvalGrid() {
     let cardClass = '';
     if (hasVote && total > 0) {
       medalRank++;
-      if (medalRank === 1) { medal = { cls: 'gold', emoji: '🥇', label: 'VITEZ' }; cardClass = 'gold'; }
+      if (medalRank === 1) { medal = { cls: 'gold', emoji: '🥇', label: 'VÍTĚZ' }; cardClass = 'gold'; }
       else if (medalRank === 2) { medal = { cls: 'silver', emoji: '🥈', label: '' }; cardClass = 'silver'; }
       else if (medalRank === 3) { medal = { cls: 'bronze', emoji: '🥉', label: '' }; cardClass = 'bronze'; }
     }
@@ -1424,7 +1424,7 @@ function renderEvalGrid() {
     delBtn.textContent = '🗑 Smazat';
     delBtn.addEventListener('click', async (evt) => {
       evt.stopPropagation();
-      if (!confirm('Smazat tento navrh? Smazou se i vsechny jeho hlasy.')) return;
+      if (!confirm('Smazat tento návrh? Smažou se i všechny jeho hlasy.')) return;
       try {
         const num = p.proposal_number;
         await fetch(SUPABASE_URL + '/rest/v1/triage_votes?round_id=eq.' + currentRound.id + '&proposal_number=eq.' + num, {
@@ -1441,7 +1441,7 @@ function renderEvalGrid() {
         await loadEvaluate();
       } catch (err) {
         console.error(err);
-        alert('Chyba pri mazani: ' + err.message);
+        alert('Chyba při mazání: ' + err.message);
       }
     });
     footer.appendChild(delBtn);
@@ -1452,7 +1452,7 @@ function renderEvalGrid() {
   if (editMode) {
     const addCard = document.createElement('div');
     addCard.className = 'eval-add-card visible';
-    addCard.textContent = '+ Pridat obrazky';
+    addCard.textContent = '+ Přidat obrázky';
     addCard.addEventListener('click', () => document.getElementById('evalAddInput').click());
     grid.appendChild(addCard);
   }
@@ -1464,7 +1464,7 @@ document.getElementById('evalAddInput').addEventListener('change', async (e) => 
   if (!files.length || !currentRound) return;
   const sumEl = document.getElementById('evalSummary');
   const prev = sumEl.textContent;
-  sumEl.textContent = 'Nahravam ' + files.length + ' obrazků...';
+  sumEl.textContent = 'Nahrávám ' + files.length + ' obrázků...';
   try {
     let nextNum = currentProposals.reduce((m, p) => Math.max(m, p.proposal_number), 0) + 1;
     const rows = [];
@@ -1484,7 +1484,7 @@ document.getElementById('evalAddInput').addEventListener('change', async (e) => 
   } catch (err) {
     console.error(err);
     sumEl.textContent = prev;
-    alert('Chyba pri nahravani: ' + err.message);
+    alert('Chyba při nahrávání: ' + err.message);
   }
 });
 
@@ -1516,7 +1516,7 @@ dropInput.addEventListener('change', (e) => {
 function handleDropped(files) {
   const images = files.filter(f => f.type.startsWith('image/'));
   const remaining = 100 - stagedFiles.length;
-  if (images.length > remaining) alert('Max 100 obrazků. Pridano jen prvnich ' + remaining + '.');
+  if (images.length > remaining) alert('Max 100 obrázků. Přidáno jen prvních ' + remaining + '.');
   images.slice(0, remaining).forEach(f => {
     stagedFiles.push({ file: f, previewUrl: URL.createObjectURL(f) });
   });
@@ -1542,8 +1542,8 @@ function renderStaged() {
   const btn = document.getElementById('createRoundBtn');
   btn.disabled = stagedFiles.length < 2;
   btn.textContent = stagedFiles.length < 2
-    ? 'Nahraj aspon 2 obrazky (' + stagedFiles.length + ')'
-    : 'Vytvorit hlasovani s ' + stagedFiles.length + ' obrazky';
+    ? 'Nahraj alespoň 2 obrázky (' + stagedFiles.length + ')'
+    : 'Vytvořit hlasování s ' + stagedFiles.length + ' obrázky';
 }
 
 document.getElementById('createRoundBtn').addEventListener('click', async () => {
@@ -1551,13 +1551,13 @@ document.getElementById('createRoundBtn').addEventListener('click', async () => 
   const maxPos = parseInt(document.getElementById('newRoundMaxPos').value) || 3;
   const maxNeg = parseInt(document.getElementById('newRoundMaxNeg').value) || 3;
   if (!name) { alert('Zadej nazev kola.'); return; }
-  if (stagedFiles.length < 2) { alert('Nahraj aspon 2 obrazky.'); return; }
+  if (stagedFiles.length < 2) { alert('Nahraj alespoň 2 obrázky.'); return; }
 
   const btn = document.getElementById('createRoundBtn');
   const status = document.getElementById('uploadStatus');
   btn.disabled = true;
   status.className = 'upload-status visible';
-  status.textContent = 'Zakladam kolo...';
+  status.textContent = 'Zakládám kolo...';
 
   let roundId = null;
   const slugBase = slugify(name);
@@ -1576,7 +1576,7 @@ document.getElementById('createRoundBtn').addEventListener('click', async () => 
 
     const rows = [];
     for (let i = 0; i < stagedFiles.length; i++) {
-      status.textContent = 'Nahravam obrazek ' + (i + 1) + ' / ' + stagedFiles.length + '...';
+      status.textContent = 'Nahrávám obrázek ' + (i + 1) + ' / ' + stagedFiles.length + '...';
       const s = stagedFiles[i];
       const ext = (s.file.name.split('.').pop() || 'jpg').toLowerCase();
       const path = slug + '/' + crypto.randomUUID() + '.' + ext;
@@ -1589,7 +1589,7 @@ document.getElementById('createRoundBtn').addEventListener('click', async () => 
         storage_path: path
       });
     }
-    status.textContent = 'Ukladam navrhy...';
+    status.textContent = 'Ukládám návrhy...';
     await sbRest('triage_proposals', { method: 'POST', body: rows });
 
     status.textContent = '✓ Hotovo!';
@@ -1603,7 +1603,7 @@ document.getElementById('createRoundBtn').addEventListener('click', async () => 
     setTimeout(() => {
       showScreen('home');
       renderStaged();
-      if (link) toast('Kolo vytvoreno. Odkaz zkopirovan.', { duration: 3500 });
+      if (link) toast('Kolo vytvořeno. Odkaz zkopírován.', { duration: 3500 });
       if (link) {
         try { navigator.clipboard.writeText(link); } catch {}
       }
