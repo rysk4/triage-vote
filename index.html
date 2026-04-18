@@ -706,6 +706,39 @@ async function sbRest(path, options) {
   return text ? JSON.parse(text) : null;
 }
 
+async function compressImage(file, { maxSize = 2048, quality = 0.82 } = {}) {
+  if (!file.type.startsWith('image/')) return file;
+  if (file.type === 'image/gif' || file.type === 'image/svg+xml') return file;
+
+  let bitmap;
+  try {
+    bitmap = await createImageBitmap(file);
+  } catch (err) {
+    console.warn('compressImage: decode failed, uploading original', file.name, err);
+    return file;
+  }
+
+  const { width, height } = bitmap;
+  const scale = Math.min(1, maxSize / Math.max(width, height));
+  const w = Math.max(1, Math.round(width * scale));
+  const h = Math.max(1, Math.round(height * scale));
+
+  const canvas = document.createElement('canvas');
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(bitmap, 0, 0, w, h);
+  bitmap.close && bitmap.close();
+
+  const blob = await new Promise((resolve) =>
+    canvas.toBlob(resolve, 'image/jpeg', quality)
+  );
+  if (!blob || blob.size >= file.size) return file;
+
+  const stem = (file.name || 'image').replace(/\.[^.]+$/, '') || 'image';
+  return new File([blob], stem + '.jpg', { type: 'image/jpeg', lastModified: Date.now() });
+}
+
 async function sbStorageUpload(path, file) {
   const res = await fetch(SUPABASE_URL + '/storage/v1/object/' + BUCKET + '/' + path, {
     method: 'POST',
@@ -1477,10 +1510,15 @@ document.getElementById('evalAddInput').addEventListener('change', async (e) => 
   try {
     let nextNum = currentProposals.reduce((m, p) => Math.max(m, p.proposal_number), 0) + 1;
     const rows = [];
+    let idx = 0;
     for (const f of files) {
-      const ext = (f.name.split('.').pop() || 'jpg').toLowerCase();
+      idx++;
+      sumEl.textContent = 'Komprimuji ' + idx + ' / ' + files.length + '...';
+      const compressed = await compressImage(f);
+      sumEl.textContent = 'Nahrávám ' + idx + ' / ' + files.length + '...';
+      const ext = (compressed.name.split('.').pop() || 'jpg').toLowerCase();
       const path = currentRound.slug + '/' + crypto.randomUUID() + '.' + ext;
-      const url = await sbStorageUpload(path, f);
+      const url = await sbStorageUpload(path, compressed);
       rows.push({
         round_id: currentRound.id,
         proposal_number: nextNum++,
@@ -1585,11 +1623,13 @@ document.getElementById('createRoundBtn').addEventListener('click', async () => 
 
     const rows = [];
     for (let i = 0; i < stagedFiles.length; i++) {
-      status.textContent = 'Nahrávám obrázek ' + (i + 1) + ' / ' + stagedFiles.length + '...';
       const s = stagedFiles[i];
-      const ext = (s.file.name.split('.').pop() || 'jpg').toLowerCase();
+      status.textContent = 'Komprimuji obrázek ' + (i + 1) + ' / ' + stagedFiles.length + '...';
+      const compressed = await compressImage(s.file);
+      status.textContent = 'Nahrávám obrázek ' + (i + 1) + ' / ' + stagedFiles.length + '...';
+      const ext = (compressed.name.split('.').pop() || 'jpg').toLowerCase();
       const path = slug + '/' + crypto.randomUUID() + '.' + ext;
-      const url = await sbStorageUpload(path, s.file);
+      const url = await sbStorageUpload(path, compressed);
       uploadedPaths.push(path);
       rows.push({
         round_id: roundId,

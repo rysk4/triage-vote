@@ -147,3 +147,20 @@ Jednoduchá hlasovaci webappka pro vyber navrhů. Uzivatele prochazeji obrazky a
 - `/` — admin (heslo `napajedla-triage-2026`)
 - `/<slug>` — public single-round (Hlasovat / Vyhodnotit, nebo rovnou Vyhodnotit pokud locked)
 - `/#<slug>` — legacy, stale funguje
+
+## 2026-04-18 — Klient-side komprese obrázků pred uploadem
+
+### Proc
+Supabase bucket `triage-images` ma limit 10 MB; telefonni fotky casto 8–30 MB padaji pri uploadu. Zaroven zbytecne bobtna storage i load pro hlasujici.
+
+### Implementace (`compressImage()` v `index.html`)
+- `createImageBitmap(file)` → canvas resize na max **2048 px** delsi strana → `canvas.toBlob('image/jpeg', 0.82)`
+- Vraci novy `File` s priponou `.jpg`; puvodni `name` stem zachovan
+- **Skip** pro `image/gif` (animace) a `image/svg+xml` (vektor)
+- **Fallback**: pokud `createImageBitmap` selze (HEIC v Chrome), nahraje original a logne warning
+- **No-op**: pokud komprimovany blob ≥ original, vrati original
+
+### Napojeni
+- Upload pri zakladani kola (uvnitr `createRoundBtn` handler): status `Komprimuji X/Y...` → `Nahravam X/Y...`
+- Eval "Pridat obrazky" (`evalAddInput` change handler): stejny pattern
+- 10 MB+ fotka se v prohlizeci dekoduje OK, po kompresi typicky **200–800 KB**
