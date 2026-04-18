@@ -46,6 +46,8 @@ Rewrite je v `vercel.json`: `/:slug([a-z0-9][a-z0-9-]*)` → `/index.html`. JS p
 
 **Storage bucket:** `triage-images` (public, 10 MB limit, jpg/png/webp/gif), path pattern `{slug}/{uuid}.{ext}`.
 
+**Upload pipeline:** každý obrázek jde před uploadem přes `compressImage()` — `createImageBitmap` → canvas resize (max 2048 px delší strana) → JPEG q=0.82. GIF/SVG se nekomprimují (animace/vektor). HEIC fallback: při decode failu nahraje originál a logne warning. Tím se 10+ MB telefonní fotky vejdou pod bucket limit.
+
 ## Deploy
 
 ```bash
@@ -69,6 +71,7 @@ GitHub Pages deploy je automatický při pushi do `main` (backup).
 4. **Tiché PATCH fail:** vždy po UPDATE/PATCH ověřit `Array.isArray(res) && res.length > 0`, jinak je to pravděpodobně missing RLS policy.
 5. **Schema změny:** přes Supabase MCP `apply_migration` s `snake_case` názvem. Vždy přidat RLS policy pro všechny CRUD operace, které klient používá.
 6. **Nové screens:** přidej do HTML s `class="screen"`, naviguj přes `showScreen(id)`. Back tlačítka používají `data-back="home"` (v public módu se při bootu přepisují na `publicHome`).
+7. **Upload obrázků:** vždy pusť přes `compressImage()` před `sbStorageUpload()` (viz helper nad `sbStorageUpload` v `index.html`). Nepřidávej nový upload flow, který obchází kompresi — bucket má 10 MB limit a telefonní fotky bývají 15–30 MB.
 
 ## Edge cases / gotchas
 
